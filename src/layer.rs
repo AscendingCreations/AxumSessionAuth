@@ -1,7 +1,7 @@
 use axum::AddExtensionLayer;
 use sqlx::postgres::PgPool;
 
-/// Session layer struct used for starting the Manager when a user comes on board.
+/// Used to create and store the Extensions Data.
 #[derive(Clone, Debug)]
 pub struct AuthSessionLayer {
     pub(crate) poll: Option<PgPool>,
@@ -9,7 +9,7 @@ pub struct AuthSessionLayer {
 }
 
 impl AuthSessionLayer {
-    /// Creates the SQLx Session Layer.
+    /// Creates a Extension so it can be accessed Directly within Requests.
     pub fn new(poll: Option<PgPool>, anonymous_user_id: Option<i64>) -> AddExtensionLayer<Self> {
         AddExtensionLayer::new(Self {
             poll,

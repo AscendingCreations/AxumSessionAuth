@@ -9,7 +9,7 @@ use axum_sqlx_sessions::SQLxSession;
 use sqlx::pool::PoolConnection;
 
 ///This is the Session that is generated when a user is routed to a page that Needs one
-/// It is used to Save and load session data similar to how it is done on python.
+/// It is used to load the user from his SQLxSession stored ID.
 #[derive(Debug, Clone)]
 pub struct AuthSession<D> {
     pub current_user: Option<D>,
