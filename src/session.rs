@@ -1,4 +1,3 @@
-use crate::AuthSessionLayer;
 pub use anyhow::Error;
 use axum::{
     async_trait,
@@ -27,14 +26,12 @@ pub trait Authentication<D> {
     fn is_anonymous(&self) -> bool;
 }
 
-/// this gets SQLxSession from the extensions and checks if any Authentication for users Exists
-/// If it Exists then it will Load the User use load_user, Otherwise it will return the
-/// AuthSession struct with current_user set to None or Guest if the Guest ID was set in AuthSessionLayer.
+/// this gets AuthSession from the extensions
 #[async_trait]
 impl<B, D> FromRequest<B> for AuthSession<D>
 where
     B: Send,
-    D: Authentication<D>,
+    D: 'static + Sync + Send + Authentication<D> + Clone,
 {
     type Rejection = (http::StatusCode, &'static str);
 
@@ -43,57 +40,16 @@ where
             StatusCode::INTERNAL_SERVER_ERROR,
             "Can't extract SQLxSession: extensions has been taken by another extractor",
         ))?;
-        let session = extensions.get::<SQLxSession>().cloned().ok_or((
+        extensions.get::<AuthSession<D>>().cloned().ok_or((
             StatusCode::INTERNAL_SERVER_ERROR,
             "Can't extract SQLxSession. Is `SQLxSessionLayer` enabled?",
-        ))?;
-        let authlayer = extensions.get::<AuthSessionLayer>().cloned().ok_or((
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Can't extract AuthSessionLayer. Is `AuthSessionLayer` enabled?",
-        ))?;
-
-        let current_id = if let Some(id) = session.get::<i64>("user_auth_session_id") {
-            Some(id)
-        } else {
-            authlayer.anonymous_user_id
-        };
-
-        let current_user = {
-            match current_id {
-                None => None,
-                Some(uid) => {
-                    if let Some(poll) = &authlayer.poll {
-                        let mut guard = poll.acquire().await.map_err(|_| {
-                            (
-                                StatusCode::INTERNAL_SERVER_ERROR,
-                                "Can't extract AuthSessionLayer. Is `AuthSessionLayer` enabled?",
-                            )
-                        })?;
-
-                        match D::load_user(uid, Some(&mut guard)).await {
-                            Ok(user) => Some(user),
-                            Err(_) => None,
-                        }
-                    } else {
-                        match D::load_user(uid, None).await {
-                            Ok(user) => Some(user),
-                            Err(_) => None,
-                        }
-                    }
-                }
-            }
-        };
-
-        Ok(AuthSession {
-            current_user,
-            session,
-        })
+        ))
     }
 }
 
 impl<D> AuthSession<D>
 where
-    D: Authentication<D>,
+    D: 'static + Sync + Send + Authentication<D>,
 {
     /// Use this to check if the user is Authenticated
     pub fn is_authenticated(&self) -> bool {
