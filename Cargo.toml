@@ -15,18 +15,6 @@ axum = "0.3"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1.51"
 axum_sqlx_sessions = "0.1.1"
-sqlx = { version = "0.5", features = [
-    "runtime-tokio-rustls",
-    "postgres",
-    "chrono",
-    "json",
-    "all-types",
-] }
+sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres", "chrono", "json", "all-types"] }
 anyhow = "1.0"
 async-recursion = "0.3.2"
-tower-layer = "0.3"
-tower-service = "0.3"
-futures = "0.3"
-http = "0.2"
-pin-project-lite = "0.2"
-futures-util = "0.3"
