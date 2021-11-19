@@ -8,7 +8,7 @@ use axum::{
 use axum_sqlx_sessions::SQLxSession;
 use sqlx::pool::PoolConnection;
 
-///This is the Session that is generated when a user is routed to a page that Needs one
+///This is the AuthSession that is generated when a user is routed to a page that Needs one
 /// It is used to load the user from his SQLxSession stored ID.
 #[derive(Debug, Clone)]
 pub struct AuthSession<D> {
@@ -119,7 +119,7 @@ where
         }
     }
 
-    /// Use this to Set the user login into the Session so it can auto login the user on request.
+    /// Use this to Set the user id into the Session so it can auto login the user on request.
     pub fn login_user(&self, id: i64) {
         let value = self.session.get::<i64>("user_auth_session_id");
 
@@ -128,7 +128,7 @@ where
         }
     }
 
-    /// Use this to remove the users login. Forcing them to login as anonymous.
+    /// Use this to remove the users id from session. Forcing them to login as anonymous.
     pub fn logout_user(&self) {
         self.session.remove("user_auth_session_id");
     }
