@@ -13,8 +13,8 @@ repository = "https://github.com/AscendingCreations/axum_sqlx_session_auth"
 [dependencies]
 axum = "0.3"
 tokio = { version = "1", features = ["full"] }
-async-trait = "0.1.51"
-axum_sqlx_sessions = "0.1.1"
+async-trait = "0.1"
+axum_sqlx_sessions = "0.1"
 sqlx = { version = "0.5", features = [
     "runtime-tokio-rustls",
     "postgres",
@@ -23,4 +23,4 @@ sqlx = { version = "0.5", features = [
     "all-types",
 ] }
 anyhow = "1.0"
-async-recursion = "0.3.2"
+async-recursion = "0.3"
