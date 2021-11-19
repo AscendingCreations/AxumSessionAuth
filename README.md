@@ -9,7 +9,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 # Example
 
-```
+```rust
 pub fn init_pool(config: &ServerConfig) -> anyhow::Result<sqlx::Pool<sqlx::Postgres>> {
     let mut connect_opts = PgConnectOptions::new();
     connect_opts.log_statements(LevelFilter::Debug);
