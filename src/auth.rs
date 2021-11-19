@@ -4,17 +4,22 @@ use axum::{async_trait, http::Method};
 use sqlx::pool::PoolConnection;
 use std::marker::PhantomData;
 
-///This Contains all of out Sessions Data including their Hashed Data they access.
+///Trait is used to check their Permissions via Tokens. uses a optional Database for SQL Token Checks too.
 #[async_trait]
 pub trait HasPermission {
     async fn has(&self, perm: &str, pool: &Option<&mut PoolConnection<sqlx::Postgres>>) -> bool;
 }
 
+///The Type of Rights a user needs will parse through these to check each point.
 #[derive(Clone)]
 pub enum Rights {
+    /// All Rights must Exist
     All(Box<[Rights]>),
+    /// Only one Right needs to Exist
     Any(Box<[Rights]>),
+    ///Can not contain Any of these Rights
     NoneOf(Box<[Rights]>),
+    ///Token to Check for. Recrusivly stores within other Rights.
     Permission(String),
     None,
 }
