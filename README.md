@@ -4,7 +4,7 @@ Library to Provide a User Authentication and privilege Token Checks. It requires
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
 The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side.
 
-[![https://crates.io/crates/axum_sqlx_session_auth](https://img.shields.io/badge/crates.io-v0.1.0-blue)](https://crates.io/crates/axum_sqlx_session_auth)
+[![https://crates.io/crates/axum_sqlx_session_auth](https://img.shields.io/badge/crates.io-v0.1.1-blue)](https://crates.io/crates/axum_sqlx_session_auth)
 [![Docs](https://docs.rs/axum_sqlx_session_auth/badge.svg)](https://docs.rs/axum_sqlx_session_auth)
 
 # Example

@@ -1,6 +1,6 @@
 [package]
 name = "axum_sqlx_session_auth"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the AxumSQLxSessions library and Tower_cookies library."
 edition = "2021"
@@ -11,7 +11,7 @@ keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/axum_sqlx_session_auth"
 
 [dependencies]
-axum = "0.3"
+axum = "0.4"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
 axum_sqlx_sessions = "0.1"
