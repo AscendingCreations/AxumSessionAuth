@@ -10,34 +10,19 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 # Example
 
 ```rust
-pub fn init_pool(config: &ServerConfig) -> anyhow::Result<sqlx::Pool<sqlx::Postgres>> {
-    let mut connect_opts = PgConnectOptions::new();
-    connect_opts.log_statements(LevelFilter::Debug);
-    connect_opts = connect_opts.database(&config.pgsql_database[..]);
-    connect_opts = connect_opts.username(&config.pgsql_user[..]);
-    connect_opts = connect_opts.password(&config.pgsql_password[..]);
-    connect_opts = connect_opts.host(&config.pgsql_host[..]);
-    connect_opts = connect_opts.port(config.pgsql_port);
-
-    let pool = block_on(
-        PgPoolOptions::new()
-            .max_connections(5)
-            .connect_with(connect_opts),
-    )?;
-
-    Ok(pool)
-}
+use sqlx::{ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
+use std::net::SocketAddr;
+use axum_sqlx_sessions::{SqlxSession, SqlxSessionConfig, SqlxSessionLayer};
+use axum_sqlx_session_auth::{AuthSession, AuthSessionLayer, Authentication};
+use axum::{
+    Router,
+    routing::get,
+};
 
 #[tokio::main]
 async fn main() {
-    // Set the RUST_LOG, if it hasn't been explicitly defined
-    if std::env::var_os("RUST_LOG").is_none() {
-        std::env::set_var("RUST_LOG", "example_templates=debug,tower_http=debug")
-    }
-    tracing_subscriber::fmt::init();
-
-    let config = //load your config here.
-    let poll = init_pool(&config).unwrap();
+    # async {
+    let poll = connect_to_database().await.unwrap();
 
     let session_config = SqlxSessionConfig::default()
         .with_database("test")
@@ -57,6 +42,7 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
+    # };
 }
 
 //we can get the Method to compare with what Methods we allow. Useful if thius supports multiple methods.
@@ -123,7 +109,7 @@ impl HasPermission for User {
 }
 
 #[async_trait]
-impl SQLxSessionAuth<User> for User {
+impl Authentication<User> for User {
     async fn load_user(userid: i64, _pool: Option<&mut PoolConnection<sqlx::Postgres>>) -> Result<User> {
         Ok(User {
             id: userid,
@@ -143,5 +129,10 @@ impl SQLxSessionAuth<User> for User {
     fn is_anonymous(&self) -> bool {
         self.anonymous
     }
+}
+
+async fn connect_to_database() -> anyhow::Result<sqlx::Pool<sqlx::Postgres>> {
+    // ...
+    # unimplemented!()
 }
 ```
