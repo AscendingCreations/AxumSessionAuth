@@ -4,7 +4,7 @@ Library to Provide a User Authentication and privilege Token Checks. It requires
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
 The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side.
 
-[![https://crates.io/crates/axum_sqlx_session_auth](https://img.shields.io/badge/crates.io-v0.1.1-blue)](https://crates.io/crates/axum_sqlx_session_auth)
+[![https://crates.io/crates/axum_sqlx_session_auth](https://img.shields.io/badge/crates.io-v0.2.0-blue)](https://crates.io/crates/axum_sqlx_session_auth)
 [![Docs](https://docs.rs/axum_sqlx_session_auth/badge.svg)](https://docs.rs/axum_sqlx_session_auth)
 
 # Example
@@ -12,7 +12,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 ```rust
 use sqlx::{ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
-use axum_sqlx_sessions::{SqlxSession, SqlxSessionConfig, SqlxSessionLayer};
+use axum_sqlx_sessions::{SqlxSession, SqlxSessionConfig, SqlxSessionLayer, SqlxDatabasePool};
 use axum_sqlx_session_auth::{AuthSession, AuthSessionLayer, Authentication};
 use axum::{
     Router,
@@ -32,8 +32,8 @@ async fn main() {
     let app = Router::new()
         .route("/greet/:name", get(greet))
         .layer(tower_cookies::CookieManagerLayer::new())
-        .layer(SqlxSessionLayer::new(session_config, poll.clone()))
-        .layer(AuthSessionLayer::new(poll.clone(), Some(1)))
+        .layer(SqlxSessionLayer::new(session_config, SqlxDatabasePool::Postgres(poll.clone())))
+        .layer(AuthSessionLayer::new(SqlxDatabasePool::Postgres(poll.clone()), Some(1)))
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -99,7 +99,7 @@ pub struct User {
 //This is only used if you want to use Token based Authentication checks
 #[async_trait]
 impl HasPermission for User {
-    async fn has(&self, perm: &String, pool: &Option<&mut PoolConnection<sqlx::Postgres>>) -> bool {
+    async fn has(&self, perm: &String, pool: &Option<&SqlxDatabasePool>) -> bool {
         match &perm[..] {
             "Token::UseAdmin" => true,
             "Token::ModifyUser" => true,
@@ -110,7 +110,7 @@ impl HasPermission for User {
 
 #[async_trait]
 impl Authentication<User> for User {
-    async fn load_user(userid: i64, _pool: Option<&mut PoolConnection<sqlx::Postgres>>) -> Result<User> {
+    async fn load_user(userid: i64, _pool: Option<&SqlxDatabasePool>) -> Result<User> {
         Ok(User {
             id: userid,
             anonymous: true,

@@ -1,6 +1,6 @@
 [package]
 name = "axum_sqlx_session_auth"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the AxumSQLxSessions library and Tower_cookies library."
 edition = "2021"
@@ -17,10 +17,9 @@ async-trait = "0.1"
 axum_sqlx_sessions = { git = "https://github.com/AscendingCreations/AxumSqlxSessions.git", branch = "anytype" }
 sqlx = { version = "0.5", features = [
     "runtime-tokio-rustls",
-    "postgres",
     "chrono",
     "json",
     "all-types",
 ] }
 anyhow = "1.0"
-async-recursion = "0.3"
+async-recursion = "1.0"
