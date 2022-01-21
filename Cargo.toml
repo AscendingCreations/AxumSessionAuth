@@ -15,7 +15,7 @@ axum = "0.4"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
 axum_sqlx_sessions = { git = "https://github.com/AscendingCreations/AxumSqlxSessions.git", branch = "anytype" }
-sqlx = { version = "0.5", features = [
+sqlx = { git = "https://github.com/genusistimelord/sqlx.git", branch = "AnyConnectionKindPublic", features = [
     "runtime-tokio-rustls",
     "chrono",
     "json",
