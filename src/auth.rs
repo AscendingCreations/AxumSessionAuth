@@ -1,13 +1,13 @@
 use crate::Authentication;
 use async_recursion::async_recursion;
 use axum::{async_trait, http::Method};
-use sqlx::pool::PoolConnection;
+use axum_sqlx_sessions:: SqlxDatabasePool ;
 use std::marker::PhantomData;
 
 ///Trait is used to check their Permissions via Tokens. uses a optional Database for SQL Token Checks too.
 #[async_trait]
 pub trait HasPermission {
-    async fn has(&self, perm: &str, pool: &Option<&mut PoolConnection<sqlx::Postgres>>) -> bool;
+    async fn has(&self, perm: &str, pool: &Option<&SqlxDatabasePool>) -> bool;
 }
 
 ///The Type of Rights a user needs will parse through these to check each point.
@@ -41,7 +41,7 @@ impl Rights {
     pub async fn evaluate(
         &self,
         user: &(dyn HasPermission + Sync),
-        db: &Option<&mut PoolConnection<sqlx::Postgres>>,
+        db: &Option<&SqlxDatabasePool>,
     ) -> bool {
         match self {
             Self::All(rights) => {
@@ -115,7 +115,7 @@ where
         &self,
         user: &D,
         method: &Method,
-        db: Option<&mut PoolConnection<sqlx::Postgres>>,
+        db: Option<&SqlxDatabasePool>,
     ) -> bool
     where
         D: HasPermission + Authentication<D>,

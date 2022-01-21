@@ -14,7 +14,7 @@ repository = "https://github.com/AscendingCreations/axum_sqlx_session_auth"
 axum = "0.4"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
-axum_sqlx_sessions = "0.1"
+axum_sqlx_sessions = { git = "https://github.com/AscendingCreations/AxumSqlxSessions.git", branch = "anytype" }
 sqlx = { version = "0.5", features = [
     "runtime-tokio-rustls",
     "postgres",

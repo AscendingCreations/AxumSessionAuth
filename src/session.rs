@@ -5,22 +5,21 @@ use axum::{
     extract::{FromRequest, RequestParts},
     http::{self, StatusCode},
 };
-use axum_sqlx_sessions::SQLxSession;
-use sqlx::pool::PoolConnection;
+use axum_sqlx_sessions::{ SqlxSession, SqlxDatabasePool };
 
 ///This is the AuthSession that is generated when a user is routed to a page that Needs one
-/// It is used to load the user from his SQLxSession stored ID.
+/// It is used to load the user from there SqlxSession stored ID.
 #[derive(Debug, Clone)]
 pub struct AuthSession<D> {
     pub current_user: Option<D>,
-    pub(crate) session: SQLxSession,
+    pub(crate) session: SqlxSession,
 }
 
 #[async_trait]
 pub trait Authentication<D> {
     async fn load_user(
         userid: i64,
-        pool: Option<&mut PoolConnection<sqlx::Postgres>>,
+        pool: Option<&SqlxDatabasePool>,
     ) -> Result<D, Error>;
     fn is_authenticated(&self) -> bool;
     fn is_active(&self) -> bool;
@@ -43,7 +42,7 @@ where
             StatusCode::INTERNAL_SERVER_ERROR,
             "Can't extract SQLxSession: extensions has been taken by another extractor",
         ))?;
-        let session = extensions.get::<SQLxSession>().cloned().ok_or((
+        let session = extensions.get::<SqlxSession>().cloned().ok_or((
             StatusCode::INTERNAL_SERVER_ERROR,
             "Can't extract SQLxSession. Is `SQLxSessionLayer` enabled?",
         ))?;
@@ -63,14 +62,7 @@ where
                 None => None,
                 Some(uid) => {
                     if let Some(poll) = &authlayer.poll {
-                        let mut guard = poll.acquire().await.map_err(|_| {
-                            (
-                                StatusCode::INTERNAL_SERVER_ERROR,
-                                "Can't extract AuthSessionLayer. Is `AuthSessionLayer` enabled?",
-                            )
-                        })?;
-
-                        match D::load_user(uid, Some(&mut guard)).await {
+                        match D::load_user(uid, Some(poll)).await {
                             Ok(user) => Some(user),
                             Err(_) => None,
                         }
