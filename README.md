@@ -32,8 +32,8 @@ async fn main() {
     let app = Router::new()
         .route("/greet/:name", get(greet))
         .layer(tower_cookies::CookieManagerLayer::new())
-        .layer(SqlxSessionLayer::new(session_config, SqlxDatabasePool::Postgres(poll.clone())))
-        .layer(AuthSessionLayer::new(SqlxDatabasePool::Postgres(poll.clone()), Some(1)))
+        .layer(SqlxSessionLayer::new(session_config, poll.clone().into()))
+        .layer(AuthSessionLayer::new(poll.clone().into(), Some(1)))
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
