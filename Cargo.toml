@@ -10,6 +10,16 @@ documentation = "https://docs.rs/axum_sqlx_session_auth"
 keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/axum_sqlx_session_auth"
 
+[package.metadata.docs.rs]
+features = ["postgres", "sqlite", "mysql"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[features]
+default = ["postgres"]
+sqlite = ["sqlx/sqlite"]
+postgres = ["sqlx/postgres"]
+mysql = ["sqlx/mysql"]
+
 [dependencies]
 axum = "0.4"
 tokio = { version = "1", features = ["full"] }
