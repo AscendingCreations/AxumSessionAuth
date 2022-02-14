@@ -19,6 +19,7 @@ sqlx = { git = "https://github.com/genusistimelord/sqlx.git", branch = "FromForA
     "runtime-tokio-rustls",
     "chrono",
     "json",
+    "any",
     "all-types",
 ] }
 anyhow = "1.0"
