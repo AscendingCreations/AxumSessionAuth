@@ -1,5 +1,14 @@
 #![doc = include_str!("../README.md")]
-//Todo: Support more databases and expand the Tokio/RLS or RustRLS Selections for SQLx
+#[cfg(not(any(feature = "postgres", feature = "mysql", feature = "sqlite",)))]
+compile_error!("one of the features ['postgres', 'mysql', 'sqlite'] must be enabled");
+
+#[cfg(any(
+    all(feature = "postgres", feature = "mysql"),
+    all(feature = "postgres", feature = "sqlite"),
+    all(feature = "mysql", feature = "sqlite"),
+))]
+compile_error!("only one of ['postgres', 'mysql', 'sqlite'] can be enabled");
+
 mod auth;
 ///This Library Requires that Tower_Cookies and AxumSQLxSessions is used as an active layer.
 mod layer;

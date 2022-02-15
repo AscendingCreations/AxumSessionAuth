@@ -1,35 +1,30 @@
 [package]
-name = "axum_sqlx_session_auth"
+name = "axum_session_auth"
 version = "0.2.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
-description = "Library to Provide a User Authentication and privilege Token Checks. It requires the AxumSQLxSessions library and Tower_cookies library."
+description = "Library to Provide a User Authentication and privilege Token Checks. It requires the AxumSessions library and Tower_cookies library."
 edition = "2021"
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.rs/axum_sqlx_session_auth"
+documentation = "https://docs.rs/axum_session_auth"
 keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
-repository = "https://github.com/AscendingCreations/axum_sqlx_session_auth"
-
-[package.metadata.docs.rs]
-features = ["postgres", "sqlite", "mysql"]
-rustdoc-args = ["--cfg", "docsrs"]
+repository = "https://github.com/AscendingCreations/axum_session_auth"
 
 [features]
 default = ["postgres"]
-sqlite = ["sqlx/sqlite"]
-postgres = ["sqlx/postgres"]
-mysql = ["sqlx/mysql"]
+sqlite = ["sqlx/sqlite", "axum_database_sessions/sqlite"]
+postgres = ["sqlx/postgres", "axum_database_sessions/postgres"]
+mysql = ["sqlx/mysql", "axum_database_sessions/mysql"]
 
 [dependencies]
 axum = "0.4"
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1.15.0", features = ["full"] }
 async-trait = "0.1"
-axum_sqlx_sessions = { git = "https://github.com/AscendingCreations/AxumSqlxSessions.git", branch = "anytype" }
-sqlx = { git = "https://github.com/genusistimelord/sqlx.git", branch = "FromForAny", features = [
-    "runtime-tokio-rustls",
+axum_database_sessions = { path = "../AxumSessions" }
+sqlx = { version = "0.5.10", features = [
+    "runtime-tokio-native-tls",
     "chrono",
     "json",
-    "any",
     "all-types",
 ] }
 anyhow = "1.0"

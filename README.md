@@ -1,19 +1,21 @@
-# axum_sqlx_session_auth
+# axum_session_auth
 
-Library to Provide a User Authentication and privilege Token Checks. It requires the AxumSQLxSessions library and Tower_cookies library.
+Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library and Tower_cookies library.
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
 The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side.
 
-[![https://crates.io/crates/axum_sqlx_session_auth](https://img.shields.io/badge/crates.io-v0.2.0-blue)](https://crates.io/crates/axum_sqlx_session_auth)
-[![Docs](https://docs.rs/axum_sqlx_session_auth/badge.svg)](https://docs.rs/axum_sqlx_session_auth)
+You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
+
+[![https://crates.io/crates/axum_session_auth](https://img.shields.io/badge/crates.io-v0.2.0-blue)](https://crates.io/crates/axum_session_auth)
+[![Docs](https://docs.rs/axum_session_auth/badge.svg)](https://docs.rs/axum_session_auth)
 
 # Example
 
 ```rust
 use sqlx::{ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
-use axum_sqlx_sessions::{SqlxSession, SqlxSessionConfig, SqlxSessionLayer, SqlxDatabasePool};
-use axum_sqlx_session_auth::{AuthSession, AuthSessionLayer, Authentication};
+use axum_database_sessions::{AxumSession, AxumSessionConfig, AxumSessionLayer, AxumDatabasePool};
+use axum_session_auth::{AuthSession, AuthSessionLayer, Authentication};
 use axum::{
     Router,
     routing::get,
@@ -24,7 +26,7 @@ async fn main() {
     # async {
     let poll = connect_to_database().await.unwrap();
 
-    let session_config = SqlxSessionConfig::default()
+    let session_config = AxumSessionConfig::default()
         .with_database("test")
         .with_table_name("test_table");
 
@@ -32,7 +34,7 @@ async fn main() {
     let app = Router::new()
         .route("/greet/:name", get(greet))
         .layer(tower_cookies::CookieManagerLayer::new())
-        .layer(SqlxSessionLayer::new(session_config, poll.clone().into()))
+        .layer(AxumSessionLayer::new(session_config, poll.clone().into()))
         .layer(AuthSessionLayer::new(Some(poll.clone().into()), Some(1)))
 
     // run it
@@ -47,7 +49,7 @@ async fn main() {
 
 //we can get the Method to compare with what Methods we allow. Useful if thius supports multiple methods.
 //When called auth is loaded in the background for you.
-async fn greet(method: Method, session: SQLxSession, auth: AuthSession<User>) -> &'static str {
+async fn greet(method: Method, session: AxumSession, auth: AuthSession<User>) -> &'static str {
     let mut count: usize = session.get("count").unwrap_or(0);
     count += 1;
     session.set("count", count);
@@ -99,7 +101,7 @@ pub struct User {
 //This is only used if you want to use Token based Authentication checks
 #[async_trait]
 impl HasPermission for User {
-    async fn has(&self, perm: &String, pool: &Option<&SqlxDatabasePool>) -> bool {
+    async fn has(&self, perm: &String, pool: &Option<&AxumDatabasePool>) -> bool {
         match &perm[..] {
             "Token::UseAdmin" => true,
             "Token::ModifyUser" => true,
@@ -110,7 +112,7 @@ impl HasPermission for User {
 
 #[async_trait]
 impl Authentication<User> for User {
-    async fn load_user(userid: i64, _pool: Option<&SqlxDatabasePool>) -> Result<User> {
+    async fn load_user(userid: i64, _pool: Option<&AxumDatabasePool>) -> Result<User> {
         Ok(User {
             id: userid,
             anonymous: true,
