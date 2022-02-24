@@ -1,6 +1,7 @@
 use crate::Authentication;
 use async_recursion::async_recursion;
-use axum::{async_trait, http::Method};
+use async_trait::async_trait;
+use http::Method;
 use axum_database_sessions::AxumDatabasePool;
 use std::marker::PhantomData;
 

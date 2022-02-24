@@ -6,8 +6,33 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.0-blue)](https://crates.io/crates/axum_sessions_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.1-blue)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
+
+## Install
+
+Axum Sessions Authentication uses [`tokio`] runtime along with ['sqlx'] and ['axum_database_sessions']; it supports [`native-tls`] and [`rustls`] TLS backends. When adding the dependency, you must chose a database feature that is `DatabaseType` and a `tls` backend. You can only choose one database type and one TLS Backend.
+
+[`tokio`]: https://github.com/tokio-rs/tokio
+[`native-tls`]: https://crates.io/crates/native-tls
+[`rustls`]: https://crates.io/crates/rustls
+[`sqlx`]: https://crates.io/crates/sqlx
+[`axum_database_sessions`]: https://crates.io/crates/axum_database_sessions
+
+```toml
+# Cargo.toml
+[dependencies]
+# Postgres + rustls
+axum_sessions_auth = { version = "0.1", features = [ "postgres", "rustls" ] }
+```
+
+#### Cargo Feature Flags
+`sqlite`: `Sqlx` support for the self-contained [SQLite](https://sqlite.org/) database engine.
+`postgres`: `Sqlx` support for the Postgres database server.
+`mysql`: `Sqlx` support for the MySQL/MariaDB database server.
+`native-tls`: Use the `tokio` runtime and `native-tls` TLS backend.
+`rustls`: Use the `tokio` runtime and `rustls` TLS backend.
+
 
 # Example
 

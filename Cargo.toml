@@ -1,6 +1,6 @@
 [package]
 name = "axum_sessions_auth"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library and Tower_cookies library."
 edition = "2021"
@@ -21,13 +21,14 @@ native-tls = [
 ]
 
 [dependencies]
-axum = "0.4"
+axum-core = "0.1.2"
 tokio = { version = "1.16", features = ["full"] }
 async-trait = "0.1"
 axum_database_sessions = { version = "0.2" }
 sqlx = { version = "0.5", features = ["chrono", "json", "all-types"] }
 anyhow = "1.0"
 async-recursion = "1.0"
+http = "0.2"
 
 [package.metadata.docs.rs]
 features = ["postgres", "rustls"]
