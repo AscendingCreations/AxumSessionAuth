@@ -1,6 +1,6 @@
 [package]
 name = "axum_sessions_auth"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library and Tower_cookies library."
 edition = "2021"
