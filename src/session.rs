@@ -5,23 +5,19 @@ use axum::{
     extract::{FromRequest, RequestParts},
     http::{self, StatusCode},
 };
-use axum_sqlx_sessions::SQLxSession;
-use sqlx::pool::PoolConnection;
+use axum_database_sessions::{AxumDatabasePool, AxumSession};
 
 ///This is the AuthSession that is generated when a user is routed to a page that Needs one
-/// It is used to load the user from his SQLxSession stored ID.
+/// It is used to load the user from there SqlxSession stored ID.
 #[derive(Debug, Clone)]
 pub struct AuthSession<D> {
     pub current_user: Option<D>,
-    pub(crate) session: SQLxSession,
+    pub(crate) session: AxumSession,
 }
 
 #[async_trait]
 pub trait Authentication<D> {
-    async fn load_user(
-        userid: i64,
-        pool: Option<&mut PoolConnection<sqlx::Postgres>>,
-    ) -> Result<D, Error>;
+    async fn load_user(userid: i64, pool: Option<&AxumDatabasePool>) -> Result<D, Error>;
     fn is_authenticated(&self) -> bool;
     fn is_active(&self) -> bool;
     fn is_anonymous(&self) -> bool;
@@ -43,7 +39,7 @@ where
             StatusCode::INTERNAL_SERVER_ERROR,
             "Can't extract SQLxSession: extensions has been taken by another extractor",
         ))?;
-        let session = extensions.get::<SQLxSession>().cloned().ok_or((
+        let session = extensions.get::<AxumSession>().cloned().ok_or((
             StatusCode::INTERNAL_SERVER_ERROR,
             "Can't extract SQLxSession. Is `SQLxSessionLayer` enabled?",
         ))?;
@@ -52,7 +48,7 @@ where
             "Can't extract AuthSessionLayer. Is `AuthSessionLayer` enabled?",
         ))?;
 
-        let current_id = if let Some(id) = session.get::<i64>("user_auth_session_id") {
+        let current_id = if let Some(id) = session.get::<i64>("user_auth_session_id").await {
             Some(id)
         } else {
             authlayer.anonymous_user_id
@@ -63,22 +59,9 @@ where
                 None => None,
                 Some(uid) => {
                     if let Some(poll) = &authlayer.poll {
-                        let mut guard = poll.acquire().await.map_err(|_| {
-                            (
-                                StatusCode::INTERNAL_SERVER_ERROR,
-                                "Can't extract AuthSessionLayer. Is `AuthSessionLayer` enabled?",
-                            )
-                        })?;
-
-                        match D::load_user(uid, Some(&mut guard)).await {
-                            Ok(user) => Some(user),
-                            Err(_) => None,
-                        }
+                        D::load_user(uid, Some(poll)).await.ok()
                     } else {
-                        match D::load_user(uid, None).await {
-                            Ok(user) => Some(user),
-                            Err(_) => None,
-                        }
+                        D::load_user(uid, None).await.ok()
                     }
                 }
             }
@@ -120,16 +103,16 @@ where
     }
 
     /// Use this to Set the user id into the Session so it can auto login the user on request.
-    pub fn login_user(&self, id: i64) {
-        let value = self.session.get::<i64>("user_auth_session_id");
+    pub async fn login_user(&self, id: i64) {
+        let value = self.session.get::<i64>("user_auth_session_id").await;
 
         if value != Some(id) {
-            self.session.set("user_auth_session_id", id);
+            self.session.set("user_auth_session_id", id).await;
         }
     }
 
     /// Use this to remove the users id from session. Forcing them to login as anonymous.
-    pub fn logout_user(&self) {
-        self.session.remove("user_auth_session_id");
+    pub async fn logout_user(&self) {
+        self.session.remove("user_auth_session_id").await;
     }
 }
