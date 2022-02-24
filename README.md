@@ -1,4 +1,4 @@
-# axum_session_auth
+# axum_sessions_auth
 
 Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library and Tower_cookies library.
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
@@ -6,8 +6,8 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_session_auth](https://img.shields.io/badge/crates.io-v0.2.0-blue)](https://crates.io/crates/axum_session_auth)
-[![Docs](https://docs.rs/axum_session_auth/badge.svg)](https://docs.rs/axum_session_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.0-blue)](https://crates.io/crates/axum_sessions_auth)
+[![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
 
 # Example
 
@@ -15,7 +15,7 @@ You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this
 use sqlx::{ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
 use axum_database_sessions::{AxumSession, AxumSessionConfig, AxumSessionLayer, AxumDatabasePool};
-use axum_session_auth::{AuthSession, AuthSessionLayer, Authentication};
+use axum_sessions_auth::{AuthSession, AuthSessionLayer, Authentication};
 use axum::{
     Router,
     routing::get,
