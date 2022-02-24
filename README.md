@@ -6,7 +6,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.1-blue)](https://crates.io/crates/axum_sessions_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.2-blue)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
 
 ## Install
