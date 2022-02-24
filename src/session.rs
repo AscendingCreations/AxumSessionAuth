@@ -1,7 +1,7 @@
 use crate::AuthSessionLayer;
 use anyhow::Error;
 use async_trait::async_trait;
-use axum::extract::{FromRequest, RequestParts};
+use axum_core::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use http::{self, StatusCode};
 
