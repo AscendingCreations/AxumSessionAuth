@@ -1,9 +1,9 @@
 use crate::AuthSessionLayer;
 use anyhow::Error;
 use async_trait::async_trait;
-use axum_core::extract::{FromRequest, RequestParts};
-use http::{self, StatusCode};
+use axum::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
+use http::{self, StatusCode};
 
 ///This is the AuthSession that is generated when a user is routed to a page that Needs one
 /// It is used to load the user from there SqlxSession stored ID.

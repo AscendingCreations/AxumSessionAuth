@@ -21,7 +21,7 @@ native-tls = [
 ]
 
 [dependencies]
-axum-core = "0.1.2"
+axum = "0.4"
 tokio = { version = "1.16", features = ["full"] }
 async-trait = "0.1"
 axum_database_sessions = { version = "0.2" }
