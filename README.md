@@ -6,7 +6,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.2-blue)](https://crates.io/crates/axum_sessions_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.3-blue)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
 
 ## Install
@@ -55,12 +55,14 @@ async fn main() {
         .with_database("test")
         .with_table_name("test_table");
 
+    let session_store = AxumSessionStore::new(Some(poll.clone().into()), session_config);
+
     // build our application with some routes
     let app = Router::new()
         .route("/greet/:name", get(greet))
-        .layer(tower_cookies::CookieManagerLayer::new())
-        .layer(AxumSessionLayer::new(session_config, poll.clone().into()))
+        .layer(AxumSessionLayer::new(session_store))
         .layer(AuthSessionLayer::new(Some(poll.clone().into()), Some(1)))
+        .layer(tower_cookies::CookieManagerLayer::new())
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
