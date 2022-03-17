@@ -62,7 +62,7 @@ async fn main() {
         .route("/greet/:name", get(greet))
         .layer(AxumSessionLayer::new(session_store))
         .layer(AuthSessionLayer::new(Some(poll.clone().into()), Some(1)))
-        .layer(tower_cookies::CookieManagerLayer::new())
+        .layer(tower_cookies::CookieManagerLayer::new());
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
