@@ -3,14 +3,17 @@ use anyhow::Error;
 use async_trait::async_trait;
 use axum_core::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
+use chrono::{DateTime, Utc};
 use http::{self, StatusCode};
 
 ///This is the AuthSession that is generated when a user is routed to a page that Needs one
 /// It is used to load the user from there SqlxSession stored ID.
 #[derive(Debug, Clone)]
 pub struct AuthSession<D> {
+    pub id: u64,
     pub current_user: Option<D>,
     pub(crate) session: AxumSession,
+    pub expires: DateTime<Utc>,
 }
 
 #[async_trait]
@@ -66,8 +69,10 @@ where
         };
 
         Ok(AuthSession {
+            id: 0,
             current_user,
             session,
+            expires: Utc::now(),
         })
     }
 }

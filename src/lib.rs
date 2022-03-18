@@ -13,8 +13,12 @@ mod add_extension;
 mod auth;
 ///This Library Requires that Tower_Cookies and AxumSQLxSessions is used as an active layer.
 mod layer;
+mod service;
 mod session;
+mod storage;
 
 pub use auth::{Auth, HasPermission, Rights};
 pub use layer::AuthSessionLayer;
+pub use service::AuthSessionService;
 pub use session::{AuthSession, Authentication};
+pub use storage::AuthStore;

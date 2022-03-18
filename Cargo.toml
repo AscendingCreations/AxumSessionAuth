@@ -11,6 +11,7 @@ keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/AxumSessionsAuth"
 
 [features]
+default = ["postgres", "rustls"]
 sqlite = ["sqlx/sqlite", "axum_database_sessions/sqlite"]
 postgres = ["sqlx/postgres", "axum_database_sessions/postgres"]
 mysql = ["sqlx/mysql", "axum_database_sessions/mysql"]
@@ -31,6 +32,7 @@ async-recursion = "1.0"
 http = "0.2"
 tower-layer = "0.3"
 tower-service = "0.3"
+chrono = { version = "0.4", features = ["clock", "serde", "std"] }
 
 [package.metadata.docs.rs]
 features = ["postgres", "rustls"]
