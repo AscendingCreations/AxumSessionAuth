@@ -1,8 +1,8 @@
 use crate::Authentication;
 use async_recursion::async_recursion;
 use async_trait::async_trait;
-use http::Method;
 use axum_database_sessions::AxumDatabasePool;
+use http::Method;
 use std::marker::PhantomData;
 
 ///Trait is used to check their Permissions via Tokens. uses a optional Database for SQL Token Checks too.
@@ -86,7 +86,7 @@ impl Rights {
 
 pub struct Auth<D>
 where
-    D: Authentication<D> + HasPermission,
+    D: Authentication<D> + HasPermission + Send,
 {
     pub rights: Rights,
     pub auth_required: bool,
@@ -96,7 +96,7 @@ where
 
 impl<D> Auth<D>
 where
-    D: Authentication<D> + HasPermission + Sync,
+    D: Authentication<D> + HasPermission + Sync + Send,
 {
     pub fn build(methods: &[Method], auth_req: bool) -> Auth<D> {
         Auth::<D> {
@@ -112,12 +112,7 @@ where
         self
     }
 
-    pub async fn validate(
-        &self,
-        user: &D,
-        method: &Method,
-        db: Option<&AxumDatabasePool>,
-    ) -> bool
+    pub async fn validate(&self, user: &D, method: &Method, db: Option<&AxumDatabasePool>) -> bool
     where
         D: HasPermission + Authentication<D>,
     {
