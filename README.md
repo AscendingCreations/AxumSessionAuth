@@ -6,7 +6,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v0.1.3-blue)](https://crates.io/crates/axum_sessions_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v1.0.0-blue)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
 
 ## Install
@@ -23,7 +23,7 @@ Axum Sessions Authentication uses [`tokio`] runtime along with ['sqlx'] and ['ax
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_sessions_auth = { version = "0.1", features = [ "postgres", "rustls" ] }
+axum_sessions_auth = { version = "1.0", features = [ "postgres", "rustls" ] }
 ```
 
 #### Cargo Feature Flags
@@ -61,7 +61,7 @@ async fn main() {
     let app = Router::new()
         .route("/greet/:name", get(greet))
         .layer(AxumSessionLayer::new(session_store))
-        .layer(AuthSessionLayer::new(Some(poll.clone().into()), Some(1)))
+        .layer(AuthSessionLayer::<User>::new(Some(poll.clone().into()), Some(1)))
         .layer(tower_cookies::CookieManagerLayer::new());
 
     // run it
@@ -118,7 +118,7 @@ async fn greet(method: Method, session: AxumSession, auth: AuthSession<User>) ->
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct User {
     pub id: i32,
     pub anonymous: bool,
