@@ -1,12 +1,12 @@
 # axum_sessions_auth
 
-Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library and Tower_cookies library.
+Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library.
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
 The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side.
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v1.0.0-blue)](https://crates.io/crates/axum_sessions_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v1.0.1-blue)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
 
 ## Install
@@ -61,8 +61,7 @@ async fn main() {
     let app = Router::new()
         .route("/greet/:name", get(greet))
         .layer(AxumSessionLayer::new(session_store))
-        .layer(AuthSessionLayer::<User>::new(Some(poll.clone().into()), Some(1)))
-        .layer(tower_cookies::CookieManagerLayer::new());
+        .layer(AuthSessionLayer::<User>::new(Some(poll.clone().into()), Some(1)));
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
