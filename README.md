@@ -164,3 +164,7 @@ async fn connect_to_database() -> anyhow::Result<sqlx::Pool<sqlx::Postgres>> {
     # unimplemented!()
 }
 ```
+
+# Help
+
+If you need help with this lirbary please go to our [Discord Group](https://discord.gg/xKkm7UhM36)
