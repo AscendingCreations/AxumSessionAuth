@@ -102,11 +102,11 @@ impl<D> Auth<D>
 where
     D: Authentication<D> + HasPermission + Sync + Send,
 {
-    pub fn build(methods: &[Method], auth_req: bool) -> Auth<D> {
+    pub fn build(methods: impl IntoIterator<Item = Method>, auth_req: bool) -> Auth<D> {
         Auth::<D> {
             rights: Rights::None,
             auth_required: auth_req,
-            methods: methods.to_vec(),
+            methods: methods.into_iter().collect(),
             phantom: PhantomData,
         }
     }
