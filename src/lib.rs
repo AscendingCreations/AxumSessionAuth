@@ -10,7 +10,7 @@ compile_error!("one of the features ['postgres', 'mysql', 'sqlite'] must be enab
 compile_error!("only one of ['postgres', 'mysql', 'sqlite'] can be enabled");
 
 mod auth;
-///This Library Requires that Tower_Cookies and AxumSQLxSessions is used as an active layer.
+///This Library Requires that AxumDatabaseSessions is used as an active layer.
 mod layer;
 mod service;
 mod session;
