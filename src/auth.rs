@@ -26,16 +26,20 @@ pub enum Rights {
 }
 
 impl Rights {
-    pub fn all(data: &[Rights]) -> Rights {
-        Rights::All(data.iter().cloned().collect())
+    pub fn all(rights: impl IntoIterator<Item = Rights>) -> Rights {
+        Rights::All(rights.into_iter().collect())
     }
 
-    pub fn any(data: &[Rights]) -> Rights {
-        Rights::Any(data.iter().cloned().collect())
+    pub fn any(rights: impl IntoIterator<Item = Rights>) -> Rights {
+        Rights::Any(rights.into_iter().collect())
     }
 
-    pub fn none(data: &[Rights]) -> Rights {
-        Rights::NoneOf(data.iter().cloned().collect())
+    pub fn none(rights: impl IntoIterator<Item = Rights>) -> Rights {
+        Rights::NoneOf(rights.into_iter().collect())
+    }
+
+    pub fn permission(permission: impl Into<String>) -> Rights {
+        Rights::Permission(permission.into())
     }
 
     #[async_recursion()]
@@ -78,7 +82,7 @@ impl Rights {
 
                 all
             },
-            Self::Permission(perm) => user.has(&perm[..], db).await,
+            Self::Permission(perm) => user.has(perm, db).await,
             Self::None => false,
         }
     }
@@ -98,11 +102,11 @@ impl<D> Auth<D>
 where
     D: Authentication<D> + HasPermission + Sync + Send,
 {
-    pub fn build(methods: &[Method], auth_req: bool) -> Auth<D> {
+    pub fn build(methods: impl IntoIterator<Item = Method>, auth_req: bool) -> Auth<D> {
         Auth::<D> {
             rights: Rights::None,
             auth_required: auth_req,
-            methods: methods.to_vec(),
+            methods: methods.into_iter().collect(),
             phantom: PhantomData,
         }
     }
