@@ -74,6 +74,11 @@ where
         }
     }
 
+    /// Use this to check if the user is Anonymous
+    pub async fn remember_user(&self, remember_me: bool) {
+        self.session.set_longterm(remember_me).await;
+    }
+
     /// Use this to Set the user id into the Session so it can auto login the user on request.
     pub async fn login_user(&self, id: i64) {
         let value = self.session.get::<i64>("user_auth_session_id").await;

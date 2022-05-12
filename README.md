@@ -6,7 +6,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 You must choose only one of ['postgres', 'mysql', 'sqlite'] features to use this library.
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v1.1.0-blue)](https://crates.io/crates/axum_sessions_auth)
+[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/badge/crates.io-v1.2.0-blue)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
 
 ## Install
@@ -23,7 +23,7 @@ Axum Sessions Authentication uses [`tokio`] runtime along with ['sqlx'] and ['ax
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_sessions_auth = { version = "1.1", features = [ "postgres", "rustls" ] }
+axum_sessions_auth = { version = "1.2", features = [ "postgres", "rustls" ] }
 ```
 
 #### Cargo Feature Flags
@@ -110,6 +110,8 @@ async fn greet(method: Method, session: AxumSession, auth: AuthSession<User>) ->
         if !auth.is_authenticated() {
             //Set the user ID of the User to the Session so it can be Auto Loaded the next load or redirect
             auth.login_user(2);
+            //Set the session to be long term. Good for Remember me type instances.
+            auth.remember_user(true);
             //redirect here after login if we did indeed login.
         }
 
