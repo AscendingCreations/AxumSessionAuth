@@ -3,7 +3,8 @@ use axum_database_sessions::AxumDatabasePool;
 use std::marker::PhantomData;
 use tower_layer::Layer;
 
-/// Used to generate an AuthSessionService.
+/// Layer used to generate an AuthSessionService.
+///
 #[derive(Clone, Debug)]
 pub struct AuthSessionLayer<D> {
     pub(crate) poll: Option<AxumDatabasePool>,
@@ -16,6 +17,14 @@ where
     D: Authentication<D> + Clone + Send,
 {
     /// Used to generate an AuthSessionLayer with will call Towers layer() to generate a AuthSessionService.
+    ///
+    /// contains an Optional axum_session_database Pool for Sqlx database lookups against Right tokens.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///    let layer = AuthSessionLayer::new(None, Some(1));
+    /// ```
+    ///
     pub fn new(poll: Option<AxumDatabasePool>, anonymous_user_id: Option<i64>) -> Self {
         Self {
             poll,
