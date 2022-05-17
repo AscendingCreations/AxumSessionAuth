@@ -67,31 +67,20 @@ where
                 }
             };
 
-            let current_id = if let Some(id) = axum_session.get::<i64>("user_auth_session_id").await
-            {
-                Some(id)
-            } else {
-                anon_id
-            };
+            let id = axum_session
+                .get::<i64>("user_auth_session_id")
+                .await
+                .map_or(anon_id, Some)
+                .unwrap_or(0);
 
-            let session = if let Some(id) = current_id {
-                AuthSession {
-                    id: id as u64,
-                    current_user: {
-                        if let Some(poll) = &poll {
-                            D::load_user(id, Some(poll)).await.ok()
-                        } else {
-                            D::load_user(id, None).await.ok()
-                        }
-                    },
-                    session: axum_session,
-                }
-            } else {
-                AuthSession {
-                    id: 0u64,
-                    current_user: None,
-                    session: axum_session,
-                }
+            let session = AuthSession {
+                id: id as u64,
+                current_user: if id > 0 {
+                    D::load_user(id, poll.as_ref()).await.ok()
+                } else {
+                    None
+                },
+                session: axum_session,
             };
 
             //Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage

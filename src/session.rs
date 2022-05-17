@@ -4,8 +4,10 @@ use axum_core::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use http::{self, StatusCode};
 
-///This is the AuthSession that is generated when a user is routed to a page that Needs one
-/// It is used to load the user from there SqlxSession stored ID.
+/// AuthSession that is generated when a user is routed via Axum
+///
+/// Contains the loaded user data, ID and an AxumSession.
+///
 #[derive(Debug, Clone)]
 pub struct AuthSession<D>
 where
@@ -50,7 +52,13 @@ impl<D> AuthSession<D>
 where
     D: Authentication<D> + Clone + Send,
 {
-    /// Use this to check if the user is Authenticated
+    /// Checks if the user is Authenticated
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.is_authenticated();
+    /// ```
+    ///
     pub fn is_authenticated(&self) -> bool {
         match &self.current_user {
             Some(n) => n.is_authenticated(),
@@ -58,7 +66,13 @@ where
         }
     }
 
-    /// Use this to check if the user is Active
+    /// Checks if the user is Active
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.is_active();
+    /// ```
+    ///
     pub fn is_active(&self) -> bool {
         match &self.current_user {
             Some(n) => n.is_active(),
@@ -66,7 +80,13 @@ where
         }
     }
 
-    /// Use this to check if the user is Anonymous
+    /// Checks if the user is Anonymous
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.is_anonymous();
+    /// ```
+    ///
     pub fn is_anonymous(&self) -> bool {
         match &self.current_user {
             Some(n) => n.is_anonymous(),
@@ -74,12 +94,24 @@ where
         }
     }
 
-    /// Use this to check if the user is Anonymous
+    /// Sets the AxumSession Data to be saved for Long Term
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.remember_user(true).await;
+    /// ```
+    ///
     pub async fn remember_user(&self, remember_me: bool) {
         self.session.set_longterm(remember_me).await;
     }
 
-    /// Use this to Set the user id into the Session so it can auto login the user on request.
+    /// Sets the user id into the Session so it can auto login the user upon Axum request.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.login_user(user.id).await;
+    /// ```
+    ///
     pub async fn login_user(&self, id: i64) {
         let value = self.session.get::<i64>("user_auth_session_id").await;
 
@@ -88,7 +120,13 @@ where
         }
     }
 
-    /// Use this to remove the users id from session. Forcing them to login as anonymous.
+    /// Removes the user id from the Session preventing the system from auto login unless guest id is set.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.logout_user().await;
+    /// ```
+    ///
     pub async fn logout_user(&self) {
         self.session.remove("user_auth_session_id").await;
     }
