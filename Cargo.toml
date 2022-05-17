@@ -12,28 +12,23 @@ repository = "https://github.com/AscendingCreations/AxumSessionsAuth"
 
 [features]
 default = ["postgres", "rustls"]
-sqlite = ["sqlx/sqlite", "axum_database_sessions/sqlite"]
-postgres = ["sqlx/postgres", "axum_database_sessions/postgres"]
-mysql = ["sqlx/mysql", "axum_database_sessions/mysql"]
-rustls = ["sqlx/runtime-tokio-rustls", "axum_database_sessions/rustls"]
-native-tls = [
-    "sqlx/runtime-tokio-native-tls",
-    "axum_database_sessions/native-tls",
-]
+sqlite = ["axum_database_sessions/sqlite"]
+postgres = ["axum_database_sessions/postgres"]
+mysql = ["axum_database_sessions/mysql"]
+rustls = ["axum_database_sessions/rustls"]
+native-tls = ["axum_database_sessions/native-tls"]
 
 [dependencies]
-axum-core = "0.2"
-tokio = { version = "1.18", features = ["full"] }
-async-trait = "0.1"
-sqlx = { version = "0.5", features = ["chrono", "json", "all-types"] }
-anyhow = "1.0"
-async-recursion = "1.0"
-http = "0.2"
-tower-layer = "0.3"
-tower-service = "0.3"
-futures = "0.3"
-bytes = "1.1"
-http-body = "0.4"
+axum-core = "0.2.4"
+async-trait = "0.1.53"
+anyhow = "1.0.57"
+async-recursion = "1.0.0"
+http = "0.2.7"
+tower-layer = "0.3.1"
+tower-service = "0.3.1"
+futures = "0.3.21"
+bytes = "1.1.0"
+http-body = "0.4.4"
 
 [dependencies.axum_database_sessions]
 git = "https://github.com/AscendingCreations/AxumSessions.git"
