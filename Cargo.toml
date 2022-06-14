@@ -19,20 +19,20 @@ rustls = ["axum_database_sessions/rustls"]
 native-tls = ["axum_database_sessions/native-tls"]
 
 [dependencies]
-axum-core = "0.2.4"
-async-trait = "0.1.53"
+axum-core = "0.2.5"
+async-trait = "0.1.56"
 anyhow = "1.0.57"
 async-recursion = "1.0.0"
-http = "0.2.7"
+http = "0.2.8"
 tower-layer = "0.3.1"
 tower-service = "0.3.1"
 futures = "0.3.21"
 bytes = "1.1.0"
-http-body = "0.4.4"
+http-body = "0.4.5"
 
 [dependencies.axum_database_sessions]
-git = "https://github.com/AscendingCreations/AxumSessions.git"
-version = "2.0.0"
+#git = "https://github.com/AscendingCreations/AxumSessions.git"
+version = "2.1.0"
 default-features = false
 
 [package.metadata.docs.rs]
