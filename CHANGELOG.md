@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## Unreleased
+## 3.0.0-beta.0 (19. July, 2022)
+### Changed
+- Updated to axum_database_sessions 4.0.0-beta.0
+
+## 2.0.0 (26. June, 2022)
+### Changed
+- Updated to axum_database_sessions 3.0.2
 
 ## 1.5.0 (14. June, 2022)
 ### Changed
