@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## Unreleased
 
+## 2.0.0 (26. June, 2022)
+### Changed
+- Updated to axum_database_sessions 3.0.2
+
 ## 1.5.0 (14. June, 2022)
 ### Changed
 - Updated to axum_database_sessions 2.1.0
