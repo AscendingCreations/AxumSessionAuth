@@ -22,7 +22,8 @@ use tower_service::Service;
 pub struct AuthSessionService<S, D, Session, Pool>
 where
     D: Authentication<D, Pool> + Send,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub(crate) pool: Option<Pool>,
     pub(crate) anonymous_user_id: Option<i64>,
@@ -34,7 +35,8 @@ where
 impl<S, D, Session, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
     for AuthSessionService<S, D, Session, Pool>
 where
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
     D: Authentication<D, Pool> + Clone + Send + Sync + 'static,
     S: Service<Request<ReqBody>, Response = Response<ResBody>, Error = Infallible>
         + Clone
@@ -100,7 +102,8 @@ impl<S, D, Session, Pool> fmt::Debug for AuthSessionService<S, D, Session, Pool>
 where
     S: fmt::Debug,
     D: Authentication<D, Pool> + fmt::Debug + Clone + Send,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("AuthSessionService")

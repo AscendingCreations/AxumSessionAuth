@@ -1,5 +1,6 @@
 use crate::{AuthSessionService, Authentication};
 use axum_database_sessions::AxumDatabasePool;
+use std::fmt;
 use std::marker::PhantomData;
 use tower_layer::Layer;
 
@@ -9,13 +10,15 @@ use tower_layer::Layer;
 pub struct AuthSessionLayer<D, Session, Pool> {
     pub(crate) pool: Option<Pool>,
     pub(crate) anonymous_user_id: Option<i64>,
-    pub phantom: PhantomData<D>,
+    pub phantom_user: PhantomData<D>,
+    pub phantom_session: PhantomData<Session>,
 }
 
 impl<D, Session, Pool> AuthSessionLayer<D, Session, Pool>
 where
     D: Authentication<D, Pool> + Clone + Send,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + Sync + Send + 'static,
 {
     /// Used to generate an AuthSessionLayer with will call Towers layer() to generate a AuthSessionService.
     ///
@@ -30,7 +33,8 @@ where
         Self {
             pool,
             anonymous_user_id,
-            phantom: PhantomData::default(),
+            phantom_user: PhantomData::default(),
+            phantom_session: PhantomData::default(),
         }
     }
 }
@@ -38,7 +42,8 @@ where
 impl<S, D, Session, Pool> Layer<S> for AuthSessionLayer<D, Session, Pool>
 where
     D: Authentication<D, Pool> + Clone + Send,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     type Service = AuthSessionService<S, D, Session, Pool>;
 

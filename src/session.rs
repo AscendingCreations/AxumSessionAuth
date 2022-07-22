@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use axum_core::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use http::{self, StatusCode};
-use std::marker::PhantomData;
+use std::{fmt, marker::PhantomData};
 
 /// AuthSession that is generated when a user is routed via Axum
 ///
@@ -12,8 +12,9 @@ use std::marker::PhantomData;
 #[derive(Debug, Clone)]
 pub struct AuthSession<D, Session, Pool>
 where
-    D: Authentication<D> + Send,
-    Pool: Clone,
+    D: Authentication<D, Pool> + Send,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub id: u64,
     pub current_user: Option<D>,
@@ -25,7 +26,7 @@ where
 pub trait Authentication<D, Pool>
 where
     D: Send,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
 {
     async fn load_user(userid: i64, pool: Option<&Pool>) -> Result<D, Error>;
     fn is_authenticated(&self) -> bool;
@@ -41,7 +42,8 @@ impl<B, D, Session, Pool> FromRequest<B> for AuthSession<D, Session, Pool>
 where
     B: Send,
     D: Authentication<D, Pool> + Clone + Send + Sync + 'static,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     type Rejection = (http::StatusCode, &'static str);
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
@@ -59,7 +61,8 @@ where
 impl<D, Session, Pool> AuthSession<D, Session, Pool>
 where
     D: Authentication<D, Pool> + Clone + Send,
-    Pool: Clone,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     /// Checks if the user is Authenticated
     ///
