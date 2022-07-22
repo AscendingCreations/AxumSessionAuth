@@ -10,8 +10,8 @@ use std::marker::PhantomData;
 /// Uses a optional Database for SQL Token Checks too.
 ///
 #[async_trait]
-pub trait HasPermission {
-    async fn has(&self, perm: &str, pool: &Option<&AxumDatabasePool>) -> bool;
+pub trait HasPermission<Pool> {
+    async fn has(&self, perm: &str, pool: &Option<&Pool>) -> bool;
 }
 
 /// Rights enumeration used for building Permissions checks against has() .
@@ -57,10 +57,10 @@ impl Rights {
     /// Evaluates all Rights based on the Rights enumeration patterns.
     ///
     #[async_recursion()]
-    pub async fn evaluate(
+    pub async fn evaluate<Pool>(
         &self,
-        user: &(dyn HasPermission + Sync),
-        db: &Option<&AxumDatabasePool>,
+        user: &(dyn HasPermission<Pool> + Sync),
+        db: &Option<&Pool>,
     ) -> bool {
         match self {
             Self::All(rights) => {
@@ -120,19 +120,20 @@ impl Rights {
 /// }
 /// ```
 ///
-pub struct Auth<D>
+pub struct Auth<D, Pool>
 where
-    D: Authentication<D> + HasPermission + Send,
+    D: Authentication<D, Pool> + HasPermission<Pool> + Send,
 {
     pub rights: Rights,
     pub auth_required: bool,
     pub methods: Vec<Method>,
-    phantom: PhantomData<D>,
+    phantom_user: PhantomData<D>,
+    phantom_pool: PhantomData<Pool>,
 }
 
-impl<D> Auth<D>
+impl<D, Pool> Auth<D, Pool>
 where
-    D: Authentication<D> + HasPermission + Sync + Send,
+    D: Authentication<D, Pool> + HasPermission<Pool> + Sync + Send,
 {
     /// Authentication Structure Builder.
     ///
@@ -150,12 +151,13 @@ where
     /// }
     /// ```
     ///
-    pub fn build(methods: impl IntoIterator<Item = Method>, auth_req: bool) -> Auth<D> {
-        Auth::<D> {
+    pub fn build(methods: impl IntoIterator<Item = Method>, auth_req: bool) -> Auth<D, Pool> {
+        Auth::<D, Pool> {
             rights: Rights::None,
             auth_required: auth_req,
             methods: methods.into_iter().collect(),
-            phantom: PhantomData,
+            phantom_user: PhantomData,
+            phantom_pool: PhantomData,
         }
     }
 
@@ -198,9 +200,9 @@ where
     /// }
     /// ```
     ///
-    pub async fn validate(&self, user: &D, method: &Method, db: Option<&AxumDatabasePool>) -> bool
+    pub async fn validate(&self, user: &D, method: &Method, db: Option<&Pool>) -> bool
     where
-        D: HasPermission + Authentication<D>,
+        D: HasPermission<Pool> + Authentication<D, Pool>,
     {
         if self.auth_required && !user.is_authenticated() {
             return false;

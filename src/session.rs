@@ -3,27 +3,31 @@ use async_trait::async_trait;
 use axum_core::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use http::{self, StatusCode};
+use std::marker::PhantomData;
 
 /// AuthSession that is generated when a user is routed via Axum
 ///
 /// Contains the loaded user data, ID and an AxumSession.
 ///
 #[derive(Debug, Clone)]
-pub struct AuthSession<D>
+pub struct AuthSession<D, Session, Pool>
 where
     D: Authentication<D> + Send,
+    Pool: Clone,
 {
     pub id: u64,
     pub current_user: Option<D>,
-    pub session: AxumSession,
+    pub session: AxumSession<Session>,
+    pub phantom: PhantomData<Pool>,
 }
 
 #[async_trait]
-pub trait Authentication<D>
+pub trait Authentication<D, Pool>
 where
     D: Send,
+    Pool: Clone,
 {
-    async fn load_user(userid: i64, pool: Option<&AxumDatabasePool>) -> Result<D, Error>;
+    async fn load_user(userid: i64, pool: Option<&Pool>) -> Result<D, Error>;
     fn is_authenticated(&self) -> bool;
     fn is_active(&self) -> bool;
     fn is_anonymous(&self) -> bool;
@@ -33,24 +37,29 @@ where
 /// If it Exists then it will Load the User use load_user, Otherwise it will return the
 /// AuthSession struct with current_user set to None or Guest if the Guest ID was set in AuthSessionLayer.
 #[async_trait]
-impl<B, D> FromRequest<B> for AuthSession<D>
+impl<B, D, Session, Pool> FromRequest<B> for AuthSession<D, Session, Pool>
 where
     B: Send,
-    D: Authentication<D> + Clone + Send + Sync + 'static,
+    D: Authentication<D, Pool> + Clone + Send + Sync + 'static,
+    Pool: Clone,
 {
     type Rejection = (http::StatusCode, &'static str);
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let extensions = req.extensions();
-        extensions.get::<AuthSession<D>>().cloned().ok_or((
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Can't extract AuthSession. Is `AuthSessionLayer` enabled?",
-        ))
+        extensions
+            .get::<AuthSession<D, Session, Pool>>()
+            .cloned()
+            .ok_or((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Can't extract AuthSession. Is `AuthSessionLayer` enabled?",
+            ))
     }
 }
 
-impl<D> AuthSession<D>
+impl<D, Session, Pool> AuthSession<D, Session, Pool>
 where
-    D: Authentication<D> + Clone + Send,
+    D: Authentication<D, Pool> + Clone + Send,
+    Pool: Clone,
 {
     /// Checks if the user is Authenticated
     ///

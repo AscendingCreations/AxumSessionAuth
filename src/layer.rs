@@ -6,15 +6,16 @@ use tower_layer::Layer;
 /// Layer used to generate an AuthSessionService.
 ///
 #[derive(Clone, Debug)]
-pub struct AuthSessionLayer<D> {
-    pub(crate) poll: Option<AxumDatabasePool>,
+pub struct AuthSessionLayer<D, Session, Pool> {
+    pub(crate) pool: Option<Pool>,
     pub(crate) anonymous_user_id: Option<i64>,
     pub phantom: PhantomData<D>,
 }
 
-impl<D> AuthSessionLayer<D>
+impl<D, Session, Pool> AuthSessionLayer<D, Session, Pool>
 where
-    D: Authentication<D> + Clone + Send,
+    D: Authentication<D, Pool> + Clone + Send,
+    Pool: Clone,
 {
     /// Used to generate an AuthSessionLayer with will call Towers layer() to generate a AuthSessionService.
     ///
@@ -25,27 +26,29 @@ where
     ///    let layer = AuthSessionLayer::new(None, Some(1));
     /// ```
     ///
-    pub fn new(poll: Option<AxumDatabasePool>, anonymous_user_id: Option<i64>) -> Self {
+    pub fn new(pool: Option<Pool>, anonymous_user_id: Option<i64>) -> Self {
         Self {
-            poll,
+            pool,
             anonymous_user_id,
             phantom: PhantomData::default(),
         }
     }
 }
 
-impl<S, D> Layer<S> for AuthSessionLayer<D>
+impl<S, D, Session, Pool> Layer<S> for AuthSessionLayer<D, Session, Pool>
 where
-    D: Authentication<D> + Clone + Send,
+    D: Authentication<D, Pool> + Clone + Send,
+    Pool: Clone,
 {
-    type Service = AuthSessionService<S, D>;
+    type Service = AuthSessionService<S, D, Session, Pool>;
 
     fn layer(&self, inner: S) -> Self::Service {
         AuthSessionService {
-            poll: self.poll.clone(),
+            pool: self.pool.clone(),
             anonymous_user_id: self.anonymous_user_id,
             inner,
-            phantom: PhantomData::default(),
+            phantom_user: PhantomData::default(),
+            phantom_session: PhantomData::default(),
         }
     }
 }
