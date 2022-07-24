@@ -73,7 +73,7 @@ async fn main() {
     # };
 }
 
-//we can get the Method to compare with what Methods we allow. Useful if thius supports multiple methods.
+//we can get the Method to compare with what Methods we allow. Useful if this supports multiple methods.
 //When called auth is loaded in the background for you.
 async fn greet(method: Method, session: AxumSession, auth: AuthSession<User>) -> &'static str {
     let mut count: usize = session.get("count").unwrap_or(0);
