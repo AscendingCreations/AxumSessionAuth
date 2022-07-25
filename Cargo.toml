@@ -33,9 +33,10 @@ bytes = "1.2.0"
 http-body = "0.4.5"
 
 [dependencies.axum_database_sessions]
-git = "https://github.com/AscendingCreations/AxumSessions.git"
+#path = "D:/Sources/AxumSessions"
+#git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "dashmap"
-version = "4.0.0-beta.2"
+version = "4.0.0"
 default-features = false
 
 [package.metadata.docs.rs]

@@ -13,7 +13,7 @@ If you need help with this library or have suggestions please go to our [Discord
 
 ## Install
 
-Axum Sessions Authentication uses [`tokio`] runtime along with ['sqlx'] and ['axum_database_sessions']; it supports [`native-tls`] and [`rustls`] TLS backends.
+Axum Sessions Authentication uses [`tokio`] runtime and ['axum_database_sessions'];
 
 [`tokio`]: https://github.com/tokio-rs/tokio
 [`native-tls`]: https://crates.io/crates/native-tls
@@ -25,7 +25,7 @@ Axum Sessions Authentication uses [`tokio`] runtime along with ['sqlx'] and ['ax
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_sessions_auth = { version = "3.0.0-beta.1", features = [ "postgres-rustls" ] }
+axum_sessions_auth = { version = "3.0.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
