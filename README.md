@@ -43,6 +43,7 @@ axum_sessions_auth = { version = "3.0.0-beta.0", features = [ "postgres-rustls" 
 
 `mysql-native`: `Sqlx` support for the MySQL/MariaDB database server and `native-tls`.
 
+`redis-db`:  `redis 0.21.5` session support.
 
 # Example
 

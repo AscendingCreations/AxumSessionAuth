@@ -18,7 +18,7 @@ postgres-rustls = ["axum_database_sessions/postgres-rustls"]
 postgres-native = ["axum_database_sessions/postgres-native"]
 mysql-rustls = ["axum_database_sessions/mysql-rustls"]
 mysql-native = ["axum_database_sessions/mysql-native"]
-redis = ["axum_database_sessions/redis"]
+redis-db = ["axum_database_sessions/redis-db"]
 
 [dependencies]
 axum-core = "0.2.7"
@@ -33,7 +33,7 @@ bytes = "1.2.0"
 http-body = "0.4.5"
 
 [dependencies.axum_database_sessions]
-#git = "https://github.com/AscendingCreations/AxumSessions.git"
+git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "dashmap"
 version = "4.0.0-beta.2"
 default-features = false
