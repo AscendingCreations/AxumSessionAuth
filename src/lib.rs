@@ -10,5 +10,3 @@ pub use auth::{Auth, HasPermission, Rights};
 pub use layer::AuthSessionLayer;
 pub use service::AuthSessionService;
 pub use session::{AuthSession, Authentication};
-
-pub use axum_database_sessions::databases::*;
