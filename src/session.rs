@@ -1,3 +1,4 @@
+use crate::AuthCache;
 use anyhow::Error;
 use async_trait::async_trait;
 use axum_core::extract::{FromRequest, RequestParts};
@@ -19,6 +20,7 @@ where
     pub id: u64,
     pub current_user: Option<D>,
     pub session: AxumSession<Session>,
+    pub(crate) cache: AuthCache<D, Pool>,
     pub phantom: PhantomData<Pool>,
 }
 
@@ -130,6 +132,28 @@ where
         if value != Some(id) {
             self.session.set("user_auth_session_id", id).await;
         }
+    }
+
+    /// Tells the system to clear the user so they get reloaded upon next Axum request.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.cache_clear_user(user.id).await;
+    /// ```
+    ///
+    pub async fn cache_clear_user(&self, id: i64) {
+        let _ = self.cache.inner.remove(&id);
+    }
+
+    /// Emptys the cache to force reload of all users.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.cache_clear_all().await;
+    /// ```
+    ///
+    pub async fn cache_clear_all(&self) {
+        self.cache.inner.clear();
     }
 
     /// Removes the user id from the Session preventing the system from auto login unless guest id is set.

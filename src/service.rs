@@ -1,4 +1,4 @@
-use crate::{AuthSession, Authentication};
+use crate::{AuthCache, AuthSession, AuthUser, Authentication, AxumAuthConfig};
 use axum_core::{
     body::{self, BoxBody},
     response::Response,
@@ -6,6 +6,7 @@ use axum_core::{
 };
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use bytes::Bytes;
+use chrono::Utc;
 use futures::future::BoxFuture;
 use http::{self, Request, StatusCode};
 use http_body::{Body as HttpBody, Full};
@@ -26,9 +27,9 @@ where
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub(crate) pool: Option<Pool>,
-    pub(crate) anonymous_user_id: Option<i64>,
+    pub(crate) config: AxumAuthConfig,
+    pub(crate) cache: AuthCache<D, Pool>,
     pub(crate) inner: S,
-    pub phantom_user: PhantomData<D>,
     pub phantom_session: PhantomData<Session>,
 }
 
@@ -58,7 +59,8 @@ where
 
     fn call(&mut self, mut req: Request<ReqBody>) -> Self::Future {
         let pool = self.pool.clone();
-        let anon_id = self.anonymous_user_id;
+        let config = self.config.clone();
+        let cache = self.cache.clone();
         let not_ready_inner = self.inner.clone();
         let mut ready_inner = std::mem::replace(&mut self.inner, not_ready_inner);
 
@@ -74,18 +76,48 @@ where
             };
 
             let id = axum_session
-                .get::<i64>("user_auth_session_id")
+                .get::<i64>(&config.session_id)
                 .await
-                .map_or(anon_id, Some)
+                .map_or(config.anonymous_user_id, Some)
                 .unwrap_or(0);
+
+            let current_user = if id > 0 {
+                if config.cache {
+                    if let Some(mut user) = cache.inner.get_mut(&id) {
+                        user.expires = Utc::now() + config.max_age;
+                        user.current_user.clone()
+                    } else {
+                        let current_user = D::load_user(id, pool.as_ref()).await.ok();
+                        let user = AuthUser::<D, Pool> {
+                            current_user: current_user.clone(),
+                            expires: Utc::now() + config.max_age,
+                            phantom: Default::default(),
+                        };
+
+                        cache.inner.insert(id, user);
+                        current_user
+                    }
+                } else {
+                    D::load_user(id, pool.as_ref()).await.ok()
+                }
+            } else {
+                None
+            };
+
+            //lets clean up the cache now that we did all our user stuff.
+            if config.cache {
+                let last_sweep = { *cache.last_expiry_sweep.read().await };
+
+                if last_sweep <= Utc::now() {
+                    cache.inner.retain(|_k, v| v.expires > Utc::now());
+                    *cache.last_expiry_sweep.write().await = Utc::now() + config.max_age;
+                }
+            }
 
             let session = AuthSession {
                 id: id as u64,
-                current_user: if id > 0 {
-                    D::load_user(id, pool.as_ref()).await.ok()
-                } else {
-                    None
-                },
+                current_user,
+                cache,
                 session: axum_session,
                 phantom: PhantomData::default(),
             };
@@ -108,7 +140,7 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("AuthSessionService")
             .field("pool", &self.pool)
-            .field("Anon ID", &self.anonymous_user_id)
+            .field("config", &self.config)
             .field("inner", &self.inner)
             .finish()
     }

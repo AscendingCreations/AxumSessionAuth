@@ -1,5 +1,6 @@
-use crate::{AuthSessionService, Authentication};
+use crate::{AuthCache, AuthSessionService, Authentication, AxumAuthConfig};
 use axum_database_sessions::AxumDatabasePool;
+use chrono::{Duration, Utc};
 use std::fmt;
 use std::marker::PhantomData;
 use tower_layer::Layer;
@@ -9,7 +10,7 @@ use tower_layer::Layer;
 #[derive(Clone, Debug)]
 pub struct AuthSessionLayer<D, Session, Pool> {
     pub(crate) pool: Option<Pool>,
-    pub(crate) anonymous_user_id: Option<i64>,
+    pub(crate) config: AxumAuthConfig,
     pub phantom_user: PhantomData<D>,
     pub phantom_session: PhantomData<Session>,
 }
@@ -26,16 +27,22 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///    let layer = AuthSessionLayer::new(None, Some(1));
+    ///    let layer = AuthSessionLayer::new(None);
     /// ```
     ///
-    pub fn new(pool: Option<Pool>, anonymous_user_id: Option<i64>) -> Self {
+    pub fn new(pool: Option<Pool>) -> Self {
         Self {
             pool,
-            anonymous_user_id,
+            config: AxumAuthConfig::default(),
             phantom_user: PhantomData::default(),
             phantom_session: PhantomData::default(),
         }
+    }
+
+    #[must_use]
+    pub fn with_config(mut self, config: AxumAuthConfig) -> Self {
+        self.config = config;
+        self
     }
 }
 
@@ -50,9 +57,9 @@ where
     fn layer(&self, inner: S) -> Self::Service {
         AuthSessionService {
             pool: self.pool.clone(),
-            anonymous_user_id: self.anonymous_user_id,
+            config: self.config.clone(),
+            cache: AuthCache::<D, Pool>::new(Utc::now() + Duration::hours(1)),
             inner,
-            phantom_user: PhantomData::default(),
             phantom_session: PhantomData::default(),
         }
     }

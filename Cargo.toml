@@ -31,6 +31,9 @@ tower-service = "0.3.2"
 futures = "0.3.21"
 bytes = "1.2.0"
 http-body = "0.4.5"
+dashmap = "5.3.4"
+chrono = { version = "0.4.20", features = ["clock", "serde", "std"] }
+tokio = { version = "1.20.1", features = ["full"] }
 
 [dependencies.axum_database_sessions]
 #path = "D:/Sources/AxumSessions"
