@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## Unreleased
+### Changed
+- *Breaking Updated Layer to use Config defaults unless with_config() is called.
+
+### Added
+- Configuration Structure.
+- Cache for storing loaded user data.
 
 ## 3.0.0 (25. July, 2022)
 ### Changed
