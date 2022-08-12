@@ -34,9 +34,10 @@ http-body = "0.4.5"
 dashmap = "5.3.4"
 chrono = { version = "0.4.20", features = ["clock", "serde", "std"] }
 tokio = { version = "1.20.1", features = ["full"] }
+serde = "1.0.143"
 
 [dependencies.axum_database_sessions]
-#path = "D:/Sources/AxumSessions"
+#path = "User:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "dashmap"
 version = "4.0.0"

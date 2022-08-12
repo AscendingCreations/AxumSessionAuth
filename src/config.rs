@@ -1,5 +1,7 @@
 use chrono::Duration;
+use serde::{de::DeserializeOwned, Serialize};
 use std::borrow::Cow;
+use std::hash::Hash;
 
 /// Configuration for how the Auth service is used.
 ///
@@ -11,29 +13,37 @@ use std::borrow::Cow;
 /// ```
 ///
 #[derive(Clone)]
-pub struct AxumAuthConfig {
+pub struct AxumAuthConfig<Type>
+where
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
+{
     /// Allows caching of Users, Must tell the database to reload user when a change is made when cached.
     pub(crate) cache: bool,
     /// The anonymous user id for logging unlogged users into a default guest like account. ID 0 is None
-    pub(crate) anonymous_user_id: Option<i64>,
+    pub(crate) anonymous_user_id: Option<Type>,
     /// Session Id for the User ID storage.
     pub(crate) session_id: Cow<'static, str>,
     /// Age the cache is allowed to live for if no visits are made.
     pub(crate) max_age: Duration,
 }
 
-impl std::fmt::Debug for AxumAuthConfig {
+impl<Type> std::fmt::Debug for AxumAuthConfig<Type>
+where
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("AxumAuthConfig")
             .field("cache", &self.cache)
-            .field("anonymous_user_id", &self.anonymous_user_id)
             .field("session_id", &self.session_id)
             .field("max_age", &self.max_age)
             .finish()
     }
 }
 
-impl AxumAuthConfig {
+impl<Type> AxumAuthConfig<Type>
+where
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
+{
     /// Creates [`Default`] configuration of [`AxumAuthConfig`].
     /// This is equivalent to the [`AxumAuthConfig::default()`].
     #[inline]
@@ -68,7 +78,7 @@ impl AxumAuthConfig {
     /// ```
     ///
     #[must_use]
-    pub fn with_anonymous_user_id(mut self, id: Option<i64>) -> Self {
+    pub fn with_anonymous_user_id(mut self, id: Option<Type>) -> Self {
         self.anonymous_user_id = id;
         self
     }
@@ -107,7 +117,10 @@ impl AxumAuthConfig {
     }
 }
 
-impl Default for AxumAuthConfig {
+impl<Type> Default for AxumAuthConfig<Type>
+where
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
+{
     fn default() -> Self {
         Self {
             /// Set to a 6 hour default in Database Session stores unloading.

@@ -2,7 +2,8 @@ use crate::Authentication;
 use async_recursion::async_recursion;
 use async_trait::async_trait;
 use http::Method;
-use std::{fmt, marker::PhantomData};
+use serde::{de::DeserializeOwned, Serialize};
+use std::{fmt, hash::Hash, marker::PhantomData};
 
 /// Trait is used to check their Permissions via Tokens.
 ///
@@ -18,7 +19,7 @@ where
 
 /// Rights enumeration used for building Permissions checks against has() .
 ///
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub enum Rights {
     /// All Rights must Exist
     All(Box<[Rights]>),
@@ -28,6 +29,7 @@ pub enum Rights {
     NoneOf(Box<[Rights]>),
     /// Token to Check for. Recrusivly stores within other Rights.
     Permission(String),
+    #[default]
     None,
 }
 
@@ -125,22 +127,25 @@ impl Rights {
 /// }
 /// ```
 ///
-pub struct Auth<D, Pool>
+pub struct Auth<User, Type, Pool>
 where
-    D: Authentication<D, Pool> + HasPermission<Pool> + Send,
+    User: Authentication<User, Type, Pool> + HasPermission<Pool> + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
     pub rights: Rights,
     pub auth_required: bool,
     pub methods: Vec<Method>,
-    phantom_user: PhantomData<D>,
+    phantom_user: PhantomData<User>,
     phantom_pool: PhantomData<Pool>,
+    phantom_type: PhantomData<Type>,
 }
 
-impl<D, Pool> Auth<D, Pool>
+impl<User, Type, Pool> Auth<User, Type, Pool>
 where
-    D: Authentication<D, Pool> + HasPermission<Pool> + Sync + Send,
+    User: Authentication<User, Type, Pool> + HasPermission<Pool> + Sync + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
     /// Authentication Structure Builder.
     ///
@@ -158,13 +163,17 @@ where
     /// }
     /// ```
     ///
-    pub fn build(methods: impl IntoIterator<Item = Method>, auth_req: bool) -> Auth<D, Pool> {
-        Auth::<D, Pool> {
+    pub fn build(
+        methods: impl IntoIterator<Item = Method>,
+        auth_req: bool,
+    ) -> Auth<User, Type, Pool> {
+        Auth::<User, Type, Pool> {
             rights: Rights::None,
             auth_required: auth_req,
             methods: methods.into_iter().collect(),
-            phantom_user: PhantomData,
-            phantom_pool: PhantomData,
+            phantom_user: Default::default(),
+            phantom_pool: Default::default(),
+            phantom_type: Default::default(),
         }
     }
 
@@ -207,9 +216,9 @@ where
     /// }
     /// ```
     ///
-    pub async fn validate(&self, user: &D, method: &Method, db: Option<&Pool>) -> bool
+    pub async fn validate(&self, user: &User, method: &Method, db: Option<&Pool>) -> bool
     where
-        D: HasPermission<Pool> + Authentication<D, Pool>,
+        User: HasPermission<Pool> + Authentication<User, Type, Pool>,
     {
         if self.auth_required && !user.is_authenticated() {
             return false;

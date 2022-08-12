@@ -10,35 +10,39 @@ use chrono::Utc;
 use futures::future::BoxFuture;
 use http::{self, Request, StatusCode};
 use http_body::{Body as HttpBody, Full};
+use serde::{de::DeserializeOwned, Serialize};
 use std::{
     boxed::Box,
     convert::Infallible,
     fmt,
+    hash::Hash,
     marker::PhantomData,
     task::{Context, Poll},
 };
 use tower_service::Service;
 
 #[derive(Clone)]
-pub struct AuthSessionService<S, D, Session, Pool>
+pub struct AuthSessionService<S, User, Type, Session, Pool>
 where
-    D: Authentication<D, Pool> + Send,
+    User: Authentication<User, Type, Pool> + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub(crate) pool: Option<Pool>,
-    pub(crate) config: AxumAuthConfig,
-    pub(crate) cache: AuthCache<D, Pool>,
+    pub(crate) config: AxumAuthConfig<Type>,
+    pub(crate) cache: AuthCache<User, Type, Pool>,
     pub(crate) inner: S,
     pub phantom_session: PhantomData<Session>,
 }
 
-impl<S, D, Session, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
-    for AuthSessionService<S, D, Session, Pool>
+impl<S, User, Type, Session, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
+    for AuthSessionService<S, User, Type, Session, Pool>
 where
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
-    D: Authentication<D, Pool> + Clone + Send + Sync + 'static,
+    User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     S: Service<Request<ReqBody>, Response = Response<ResBody>, Error = Infallible>
         + Clone
         + Send
@@ -76,29 +80,30 @@ where
             };
 
             let id = axum_session
-                .get::<i64>(&config.session_id)
+                .get::<Type>(&config.session_id)
                 .await
                 .map_or(config.anonymous_user_id, Some)
-                .unwrap_or(0);
+                .unwrap_or_else(|| Type::default());
 
-            let current_user = if id > 0 {
+            let current_user = if id != Type::default() {
                 if config.cache {
                     if let Some(mut user) = cache.inner.get_mut(&id) {
                         user.expires = Utc::now() + config.max_age;
                         user.current_user.clone()
                     } else {
-                        let current_user = D::load_user(id, pool.as_ref()).await.ok();
-                        let user = AuthUser::<D, Pool> {
+                        let current_user = User::load_user(id.clone(), pool.as_ref()).await.ok();
+                        let user = AuthUser::<User, Type, Pool> {
                             current_user: current_user.clone(),
                             expires: Utc::now() + config.max_age,
-                            phantom: Default::default(),
+                            phantom_pool: Default::default(),
+                            phantom_type: Default::default(),
                         };
 
-                        cache.inner.insert(id, user);
+                        cache.inner.insert(id.clone(), user);
                         current_user
                     }
                 } else {
-                    D::load_user(id, pool.as_ref()).await.ok()
+                    User::load_user(id.clone(), pool.as_ref()).await.ok()
                 }
             } else {
                 None
@@ -115,7 +120,7 @@ where
             }
 
             let session = AuthSession {
-                id: id as u64,
+                id,
                 current_user,
                 cache,
                 session: axum_session,
@@ -130,11 +135,12 @@ where
     }
 }
 
-impl<S, D, Session, Pool> fmt::Debug for AuthSessionService<S, D, Session, Pool>
+impl<S, User, Type, Session, Pool> fmt::Debug for AuthSessionService<S, User, Type, Session, Pool>
 where
     S: fmt::Debug,
-    D: Authentication<D, Pool> + fmt::Debug + Clone + Send,
+    User: Authentication<User, Type, Pool> + fmt::Debug + Clone + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
