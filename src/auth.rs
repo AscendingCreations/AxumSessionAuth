@@ -115,7 +115,7 @@ impl Rights {
 ///
 /// # Examples
 /// ```rust no_run
-/// if !Auth::<User>::build([Method::POST], true)
+/// if !Auth::<User, i64, Pool>::build([Method::POST], true)
 ///     .requires(Rights::all([
 ///         Rights::permission("admin:view"),
 ///         Rights::permission("form:editreports"),
@@ -151,7 +151,7 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    /// if !Auth::<User>::build([Method::POST], true)
+    /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
     ///     .requires(Rights::all([
     ///         Rights::permission("admin:view"),
     ///         Rights::permission("form:editreports"),
@@ -181,7 +181,7 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    /// if !Auth::<User>::build([Method::POST], true)
+    /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
     ///     .requires(Rights::all([
     ///         Rights::permission("admin:view"),
     ///         Rights::permission("form:editreports"),
@@ -204,7 +204,7 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    /// if !Auth::<User>::build([Method::POST], true)
+    /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
     ///     .requires(Rights::all([
     ///         Rights::permission("admin:view"),
     ///         Rights::permission("form:editreports"),

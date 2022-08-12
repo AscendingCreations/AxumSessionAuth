@@ -39,7 +39,7 @@ where
     fn is_anonymous(&self) -> bool;
 }
 
-/// this gets SQLxSession from the extensions and checks if any Authentication for users Exists
+/// This gets SQLxSession from the extensions and checks if any Authentication for users Exists
 /// If it Exists then it will Load the User use load_user, Otherwise it will return the
 /// AuthSession struct with current_user set to None or Guest if the Guest ID was set in AuthSessionLayer.
 #[async_trait]

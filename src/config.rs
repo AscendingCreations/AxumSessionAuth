@@ -9,7 +9,7 @@ use std::hash::Hash;
 /// ```rust
 /// use axum_sessions_auth::AxumAuthConfig;
 ///
-/// let config = AxumAuthConfig::default();
+/// let config = AxumAuthConfig::<i64>::default();
 /// ```
 ///
 #[derive(Clone)]
@@ -45,7 +45,7 @@ where
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
     /// Creates [`Default`] configuration of [`AxumAuthConfig`].
-    /// This is equivalent to the [`AxumAuthConfig::default()`].
+    /// This is equivalent to the [`AxumAuthConfig::<i64>::default()`].
     #[inline]
     pub fn new() -> Self {
         Default::default()
@@ -58,7 +58,7 @@ where
     /// ```rust
     /// use axum_sessions_auth::AxumAuthConfig;
     ///
-    /// let config = AxumAuthConfig::default().set_cache(true);
+    /// let config = AxumAuthConfig::<i64>::default().set_cache(true);
     /// ```
     ///
     #[must_use]
@@ -74,7 +74,7 @@ where
     /// ```rust
     /// use axum_sessions_auth::AxumAuthConfig;
     ///
-    /// let config = AxumAuthConfig::default().with_anonymous_user_id(Some(0));
+    /// let config = AxumAuthConfig::<i64>::default().with_anonymous_user_id(Some(0));
     /// ```
     ///
     #[must_use]
@@ -92,7 +92,7 @@ where
     /// use axum_sessions_auth::AxumAuthConfig;
     /// use chrono::Duration;
     ///
-    /// let config = AxumAuthConfig::default().with_max_age(Some(Duration::days(2)));
+    /// let config = AxumAuthConfig::<i64>::default().with_max_age(Some(Duration::days(2)));
     /// ```
     ///
     #[must_use]
@@ -107,7 +107,7 @@ where
     /// ```rust
     /// use axum_sessions_auth::AxumAuthConfig;
     ///
-    /// let config = AxumAuthConfig::default().with_session_id("www.helpme.com".to_string());
+    /// let config = AxumAuthConfig::<i64>::default().with_session_id("www.helpme.com".to_string());
     /// ```
     ///
     #[must_use]

@@ -32,7 +32,7 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///    let layer = AuthSessionLayer::new(None);
+    ///    let layer = AuthSessionLayer::<User, i64, Session, Pool>::new(None);
     /// ```
     ///
     pub fn new(pool: Option<Pool>) -> Self {

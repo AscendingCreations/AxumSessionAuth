@@ -109,7 +109,7 @@ where
                 None
             };
 
-            //lets clean up the cache now that we did all our user stuff.
+            // Lets clean up the cache now that we did all our user stuff.
             if config.cache {
                 let last_sweep = { *cache.last_expiry_sweep.read().await };
 
@@ -127,7 +127,7 @@ where
                 phantom: PhantomData::default(),
             };
 
-            //Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
+            // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
             req.extensions_mut().insert(session.clone());
 
             Ok(ready_inner.call(req).await?.map(body::boxed))
