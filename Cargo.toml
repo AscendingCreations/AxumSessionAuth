@@ -21,26 +21,26 @@ mysql-native = ["axum_database_sessions/mysql-native"]
 redis-db = ["axum_database_sessions/redis-db"]
 
 [dependencies]
-axum-core = "0.2.7"
-async-trait = "0.1.56"
-anyhow = "1.0.58"
+axum-core = "0.3.0-rc.1"
+async-trait = "0.1.57"
+anyhow = "1.0.60"
 async-recursion = "1.0.0"
 http = "0.2.8"
 tower-layer = "0.3.1"
 tower-service = "0.3.2"
-futures = "0.3.21"
-bytes = "1.2.0"
+futures = "0.3.23"
+bytes = "1.2.1"
 http-body = "0.4.5"
 dashmap = "5.3.4"
 chrono = { version = "0.4.20", features = ["clock", "serde", "std"] }
 tokio = { version = "1.20.1", features = ["full"] }
-serde = "1.0.143"
+serde = "1.0.144"
 
 [dependencies.axum_database_sessions]
 #path = "User:/Sources/AxumSessions"
-#git = "https://github.com/AscendingCreations/AxumSessions.git"
-#branch = "dashmap"
-version = "4.0.0"
+git = "https://github.com/AscendingCreations/AxumSessions.git"
+branch = "axum0.6"
+version = "4.1.0"
 default-features = false
 
 [package.metadata.docs.rs]

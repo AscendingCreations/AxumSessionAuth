@@ -1,9 +1,9 @@
 use crate::AuthCache;
 use anyhow::Error;
 use async_trait::async_trait;
-use axum_core::extract::{FromRequest, RequestParts};
+use axum_core::extract::FromRequestParts;
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
-use http::{self, StatusCode};
+use http::{self, request::Parts, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData};
 
@@ -39,22 +39,20 @@ where
     fn is_anonymous(&self) -> bool;
 }
 
-/// This gets SQLxSession from the extensions and checks if any Authentication for users Exists
-/// If it Exists then it will Load the User use load_user, Otherwise it will return the
-/// AuthSession struct with current_user set to None or Guest if the Guest ID was set in AuthSessionLayer.
 #[async_trait]
-impl<B, User, Type, Session, Pool> FromRequest<B> for AuthSession<User, Type, Session, Pool>
+impl<S, User, Type, Session, Pool> FromRequestParts<S> for AuthSession<User, Type, Session, Pool>
 where
-    B: Send,
     User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    S: Send + Sync,
 {
     type Rejection = (http::StatusCode, &'static str);
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let extensions = req.extensions();
-        extensions
+
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        parts
+            .extensions
             .get::<AuthSession<User, Type, Session, Pool>>()
             .cloned()
             .ok_or((
