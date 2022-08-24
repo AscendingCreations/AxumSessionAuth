@@ -1,55 +1,61 @@
+use crate::AuthCache;
 use anyhow::Error;
 use async_trait::async_trait;
 use axum_core::extract::{FromRequest, RequestParts};
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use http::{self, StatusCode};
-use std::{fmt, marker::PhantomData};
+use serde::{de::DeserializeOwned, Serialize};
+use std::{fmt, hash::Hash, marker::PhantomData};
 
 /// AuthSession that is generated when a user is routed via Axum
 ///
 /// Contains the loaded user data, ID and an AxumSession.
 ///
 #[derive(Debug, Clone)]
-pub struct AuthSession<D, Session, Pool>
+pub struct AuthSession<User, Type, Session, Pool>
 where
-    D: Authentication<D, Pool> + Send,
+    User: Authentication<User, Type, Pool> + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
-    pub id: u64,
-    pub current_user: Option<D>,
+    pub id: Type,
+    pub current_user: Option<User>,
     pub session: AxumSession<Session>,
+    pub(crate) cache: AuthCache<User, Type, Pool>,
     pub phantom: PhantomData<Pool>,
 }
 
 #[async_trait]
-pub trait Authentication<D, Pool>
+pub trait Authentication<User, Type, Pool>
 where
-    D: Send,
+    User: Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
-    async fn load_user(userid: i64, pool: Option<&Pool>) -> Result<D, Error>;
+    async fn load_user(userid: Type, pool: Option<&Pool>) -> Result<User, Error>;
     fn is_authenticated(&self) -> bool;
     fn is_active(&self) -> bool;
     fn is_anonymous(&self) -> bool;
 }
 
-/// this gets SQLxSession from the extensions and checks if any Authentication for users Exists
+/// This gets SQLxSession from the extensions and checks if any Authentication for users Exists
 /// If it Exists then it will Load the User use load_user, Otherwise it will return the
 /// AuthSession struct with current_user set to None or Guest if the Guest ID was set in AuthSessionLayer.
 #[async_trait]
-impl<B, D, Session, Pool> FromRequest<B> for AuthSession<D, Session, Pool>
+impl<B, User, Type, Session, Pool> FromRequest<B> for AuthSession<User, Type, Session, Pool>
 where
     B: Send,
-    D: Authentication<D, Pool> + Clone + Send + Sync + 'static,
+    User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     type Rejection = (http::StatusCode, &'static str);
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let extensions = req.extensions();
         extensions
-            .get::<AuthSession<D, Session, Pool>>()
+            .get::<AuthSession<User, Type, Session, Pool>>()
             .cloned()
             .ok_or((
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -58,10 +64,11 @@ where
     }
 }
 
-impl<D, Session, Pool> AuthSession<D, Session, Pool>
+impl<User, Type, Session, Pool> AuthSession<User, Type, Session, Pool>
 where
-    D: Authentication<D, Pool> + Clone + Send,
+    User: Authentication<User, Type, Pool> + Clone + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     /// Checks if the user is Authenticated
@@ -130,6 +137,28 @@ where
         if value != Some(id) {
             self.session.set("user_auth_session_id", id).await;
         }
+    }
+
+    /// Tells the system to clear the user so they get reloaded upon next Axum request.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.cache_clear_user(user.id).await;
+    /// ```
+    ///
+    pub async fn cache_clear_user(&self, id: Type) {
+        let _ = self.cache.inner.remove(&id);
+    }
+
+    /// Emptys the cache to force reload of all users.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.cache_clear_all().await;
+    /// ```
+    ///
+    pub async fn cache_clear_all(&self) {
+        self.cache.inner.clear();
     }
 
     /// Removes the user id from the Session preventing the system from auto login unless guest id is set.

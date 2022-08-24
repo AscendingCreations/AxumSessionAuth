@@ -1,4 +1,4 @@
-use crate::{AuthSession, Authentication};
+use crate::{AuthCache, AuthSession, AuthUser, Authentication, AxumAuthConfig};
 use axum_core::{
     body::{self, BoxBody},
     response::Response,
@@ -6,38 +6,43 @@ use axum_core::{
 };
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
 use bytes::Bytes;
+use chrono::Utc;
 use futures::future::BoxFuture;
 use http::{self, Request, StatusCode};
 use http_body::{Body as HttpBody, Full};
+use serde::{de::DeserializeOwned, Serialize};
 use std::{
     boxed::Box,
     convert::Infallible,
     fmt,
+    hash::Hash,
     marker::PhantomData,
     task::{Context, Poll},
 };
 use tower_service::Service;
 
 #[derive(Clone)]
-pub struct AuthSessionService<S, D, Session, Pool>
+pub struct AuthSessionService<S, User, Type, Session, Pool>
 where
-    D: Authentication<D, Pool> + Send,
+    User: Authentication<User, Type, Pool> + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub(crate) pool: Option<Pool>,
-    pub(crate) anonymous_user_id: Option<i64>,
+    pub(crate) config: AxumAuthConfig<Type>,
+    pub(crate) cache: AuthCache<User, Type, Pool>,
     pub(crate) inner: S,
-    pub phantom_user: PhantomData<D>,
     pub phantom_session: PhantomData<Session>,
 }
 
-impl<S, D, Session, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
-    for AuthSessionService<S, D, Session, Pool>
+impl<S, User, Type, Session, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
+    for AuthSessionService<S, User, Type, Session, Pool>
 where
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
-    D: Authentication<D, Pool> + Clone + Send + Sync + 'static,
+    User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     S: Service<Request<ReqBody>, Response = Response<ResBody>, Error = Infallible>
         + Clone
         + Send
@@ -58,7 +63,8 @@ where
 
     fn call(&mut self, mut req: Request<ReqBody>) -> Self::Future {
         let pool = self.pool.clone();
-        let anon_id = self.anonymous_user_id;
+        let config = self.config.clone();
+        let cache = self.cache.clone();
         let not_ready_inner = self.inner.clone();
         let mut ready_inner = std::mem::replace(&mut self.inner, not_ready_inner);
 
@@ -74,23 +80,54 @@ where
             };
 
             let id = axum_session
-                .get::<i64>("user_auth_session_id")
+                .get::<Type>(&config.session_id)
                 .await
-                .map_or(anon_id, Some)
-                .unwrap_or(0);
+                .map_or(config.anonymous_user_id, Some)
+                .unwrap_or_else(|| Type::default());
+
+            let current_user = if id != Type::default() {
+                if config.cache {
+                    if let Some(mut user) = cache.inner.get_mut(&id) {
+                        user.expires = Utc::now() + config.max_age;
+                        user.current_user.clone()
+                    } else {
+                        let current_user = User::load_user(id.clone(), pool.as_ref()).await.ok();
+                        let user = AuthUser::<User, Type, Pool> {
+                            current_user: current_user.clone(),
+                            expires: Utc::now() + config.max_age,
+                            phantom_pool: Default::default(),
+                            phantom_type: Default::default(),
+                        };
+
+                        cache.inner.insert(id.clone(), user);
+                        current_user
+                    }
+                } else {
+                    User::load_user(id.clone(), pool.as_ref()).await.ok()
+                }
+            } else {
+                None
+            };
+
+            // Lets clean up the cache now that we did all our user stuff.
+            if config.cache {
+                let last_sweep = { *cache.last_expiry_sweep.read().await };
+
+                if last_sweep <= Utc::now() {
+                    cache.inner.retain(|_k, v| v.expires > Utc::now());
+                    *cache.last_expiry_sweep.write().await = Utc::now() + config.max_age;
+                }
+            }
 
             let session = AuthSession {
-                id: id as u64,
-                current_user: if id > 0 {
-                    D::load_user(id, pool.as_ref()).await.ok()
-                } else {
-                    None
-                },
+                id,
+                current_user,
+                cache,
                 session: axum_session,
                 phantom: PhantomData::default(),
             };
 
-            //Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
+            // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
             req.extensions_mut().insert(session.clone());
 
             Ok(ready_inner.call(req).await?.map(body::boxed))
@@ -98,17 +135,18 @@ where
     }
 }
 
-impl<S, D, Session, Pool> fmt::Debug for AuthSessionService<S, D, Session, Pool>
+impl<S, User, Type, Session, Pool> fmt::Debug for AuthSessionService<S, User, Type, Session, Pool>
 where
     S: fmt::Debug,
-    D: Authentication<D, Pool> + fmt::Debug + Clone + Send,
+    User: Authentication<User, Type, Pool> + fmt::Debug + Clone + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
+    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("AuthSessionService")
             .field("pool", &self.pool)
-            .field("Anon ID", &self.anonymous_user_id)
+            .field("config", &self.config)
             .field("inner", &self.inner)
             .finish()
     }

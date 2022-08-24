@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## Unreleased
 
+
+## 4.0.0 (24. August, 2022)
+### Changed
+- *Breaking Updated Layer to use Config defaults unless with_config() is called.
+
+### Added
+- Configuration Structure.
+- Cache for storing loaded user data.
+- Ability to use any type for the User ID as long as it follows the requirements.
+
 ## 3.0.0 (25. July, 2022)
 ### Changed
 - Updated to axum_database_sessions 4.0.0

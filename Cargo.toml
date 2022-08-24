@@ -1,6 +1,6 @@
 [package]
 name = "axum_sessions_auth"
-version = "3.0.0"
+version = "4.0.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library."
 edition = "2021"
@@ -31,9 +31,13 @@ tower-service = "0.3.2"
 futures = "0.3.21"
 bytes = "1.2.0"
 http-body = "0.4.5"
+dashmap = "5.3.4"
+chrono = { version = "0.4.20", features = ["clock", "serde", "std"] }
+tokio = { version = "1.20.1", features = ["full"] }
+serde = "1.0.143"
 
 [dependencies.axum_database_sessions]
-#path = "D:/Sources/AxumSessions"
+#path = "User:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "dashmap"
 version = "4.0.0"
