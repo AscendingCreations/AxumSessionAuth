@@ -4,16 +4,14 @@
 mod auth;
 mod cache;
 mod config;
-mod layer;
-mod service;
+mod manager;
 mod session;
 mod user;
 
 pub use auth::{Auth, HasPermission, Rights};
 pub use cache::AuthCache;
 pub use config::AxumAuthConfig;
-pub use layer::AuthSessionLayer;
-pub use service::AuthSessionService;
+pub use manager::AuthManager;
 pub use session::{AuthSession, Authentication};
 pub(crate) use user::AuthUser;
 

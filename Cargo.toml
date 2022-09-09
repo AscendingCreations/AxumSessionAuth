@@ -39,7 +39,7 @@ serde = "1.0.144"
 [dependencies.axum_database_sessions]
 #path = "User:/Sources/AxumSessions"
 git = "https://github.com/AscendingCreations/AxumSessions.git"
-branch = "axum0.6"
+branch = "state"
 version = "4.1.0"
 default-features = false
 

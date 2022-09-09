@@ -50,29 +50,52 @@ axum_sessions_auth = { version = "4.0.0", features = [ "postgres-rustls" ] }
 ```rust
 use sqlx::{PgPool, ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
-use axum_database_sessions::{AxumPgPool, AxumSession, AxumSessionConfig, AxumSessionLayer, AxumDatabasePool};
-use axum_sessions_auth::{AuthSession, AuthSessionLayer, Authentication, AxumAuthConfig};
+use axum_database_sessions::{AxumPgPool, AxumSession, AxumSessionConfig, AxumDatabasePool};
+use axum_sessions_auth::{AuthSession, AuthManager, Authentication, AxumAuthConfig};
 use axum::{
     Router,
     routing::get,
+    extract::FromRef
 };
+
+#[derive(Clone)]
+pub struct SystemState {
+    pub session_store: AxumSessionStore<AxumPgPool>,
+    pub auth_manager: AuthSessionManager<User, i64, AxumPgPool, PgPool>,
+}
+
+impl SystemState {
+    pub fn new(session_store: AxumSessionStore<AxumPgPool>, auth_manager: AuthSessionManager<User, i64, AxumPgPool, PgPool>) -> Self {
+        Self { session_store, auth_manager }
+    }
+}
+
+impl FromRef<SystemState> for AuthSessionManager<User, i64, AxumPgPool, PgPool> {
+    fn from_ref(input: &SystemState) -> Self {
+        input.auth_manager.clone()
+    }
+}
+
+impl FromRef<SystemState> for AxumSessionStore<AxumPgPool> {
+    fn from_ref(input: &SystemState) -> Self {
+        input.session_store.clone()
+    }
+}
 
 #[tokio::main]
 async fn main() {
     # async {
     let poll = connect_to_database().await.unwrap();
-
     let session_config = AxumSessionConfig::default()
         .with_database("test")
         .with_table_name("test_table");
     let auth_config = AxumAuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
     let session_store = AxumSessionStore::<AxumPgPool>::new(Some(poll.clone().into()), session_config);
+    let auth_manager = AuthSessionManager::<User, i64, AxumPgPool, PgPool>::new(Some(poll.clone().into()), auth_config);
 
     // Build our application with some routes
     let app = Router::new()
-        .route("/greet/:name", get(greet))
-        .layer(AxumSessionLayer::new(session_store))
-        .layer(AuthSessionLayer::<User, i64, AxumPgPool, PgPool>::new(Some(poll)).with_config(auth_config));
+        .route("/greet/:name", get(greet));
 
     // Run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
