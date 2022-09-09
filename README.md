@@ -92,9 +92,10 @@ async fn main() {
     let auth_config = AxumAuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
     let session_store = AxumSessionStore::<AxumPgPool>::new(Some(poll.clone().into()), session_config);
     let auth_manager = AuthSessionManager::<User, i64, AxumPgPool, PgPool>::new(Some(poll.clone().into()), auth_config);
+    let state = SystemState::new(session_store, auth_manager);
 
     // Build our application with some routes
-    let app = Router::new()
+    let app = Router::with_state(state)
         .route("/greet/:name", get(greet));
 
     // Run it
