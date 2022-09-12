@@ -163,6 +163,6 @@ where
     /// ```
     ///
     pub async fn logout_user(&self) {
-        self.session.remove::<Type>("user_auth_session_id").await;
+        self.session.remove("user_auth_session_id").await;
     }
 }
