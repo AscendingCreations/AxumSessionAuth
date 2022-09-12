@@ -129,8 +129,8 @@ where
     ///  auth.login_user(user.id).await;
     /// ```
     ///
-    pub async fn login_user(&self, id: i64) {
-        let value = self.session.get::<i64>("user_auth_session_id").await;
+    pub async fn login_user(&self, id: Type) {
+        let value = self.session.get::<Type>("user_auth_session_id").await;
 
         if value != Some(id) {
             self.session.set("user_auth_session_id", id).await;
@@ -167,6 +167,6 @@ where
     /// ```
     ///
     pub async fn logout_user(&self) {
-        self.session.remove("user_auth_session_id").await;
+        self.session.remove::<Type>("user_auth_session_id").await;
     }
 }
