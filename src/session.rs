@@ -130,11 +130,7 @@ where
     /// ```
     ///
     pub async fn login_user(&self, id: Type) {
-        let value = self.session.get::<Type>("user_auth_session_id").await;
-
-        if value != Some(id) {
-            self.session.set("user_auth_session_id", id).await;
-        }
+        self.session.set("user_auth_session_id", id).await;
     }
 
     /// Tells the system to clear the user so they get reloaded upon next Axum request.
