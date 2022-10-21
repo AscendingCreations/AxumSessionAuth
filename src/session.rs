@@ -115,32 +115,33 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.remember_user(true).await;
+    ///  auth.remember_user(true);
     /// ```
     ///
-    pub async fn remember_user(&self, remember_me: bool) {
-        self.session.set_longterm(remember_me).await;
+    pub fn remember_user(&self, remember_me: bool) {
+        self.session.set_longterm(remember_me);
     }
 
     /// Sets the user id into the Session so it can auto login the user upon Axum request.
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.login_user(user.id).await;
+    ///  auth.login_user(user.id);
     /// ```
     ///
-    pub async fn login_user(&self, id: Type) {
-        self.session.set("user_auth_session_id", id).await;
+    pub fn login_user(&self, id: Type) {
+        self.session.set("user_auth_session_id", id);
+        self.session.renew();
     }
 
     /// Tells the system to clear the user so they get reloaded upon next Axum request.
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.cache_clear_user(user.id).await;
+    ///  auth.cache_clear_user(user.id);
     /// ```
     ///
-    pub async fn cache_clear_user(&self, id: Type) {
+    pub fn cache_clear_user(&self, id: Type) {
         let _ = self.cache.inner.remove(&id);
     }
 
@@ -148,10 +149,10 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.cache_clear_all().await;
+    ///  auth.cache_clear_all();
     /// ```
     ///
-    pub async fn cache_clear_all(&self) {
+    pub fn cache_clear_all(&self) {
         self.cache.inner.clear();
     }
 
@@ -159,10 +160,11 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.logout_user().await;
+    ///  auth.logout_user();
     /// ```
     ///
-    pub async fn logout_user(&self) {
-        self.session.remove("user_auth_session_id").await;
+    pub fn logout_user(&self) {
+        self.session.remove("user_auth_session_id");
+        self.session.renew();
     }
 }
