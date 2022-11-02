@@ -1,9 +1,9 @@
 use crate::AuthCache;
 use anyhow::Error;
 use async_trait::async_trait;
-use axum_core::extract::{FromRequest, RequestParts};
+use axum_core::extract::FromRequestParts;
 use axum_database_sessions::{AxumDatabasePool, AxumSession};
-use http::{self, StatusCode};
+use http::{self, request::Parts, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData};
 
@@ -39,22 +39,20 @@ where
     fn is_anonymous(&self) -> bool;
 }
 
-/// This gets SQLxSession from the extensions and checks if any Authentication for users Exists
-/// If it Exists then it will Load the User use load_user, Otherwise it will return the
-/// AuthSession struct with current_user set to None or Guest if the Guest ID was set in AuthSessionLayer.
 #[async_trait]
-impl<B, User, Type, Session, Pool> FromRequest<B> for AuthSession<User, Type, Session, Pool>
+impl<S, User, Type, Session, Pool> FromRequestParts<S> for AuthSession<User, Type, Session, Pool>
 where
-    B: Send,
     User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
     Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    S: Send + Sync,
 {
     type Rejection = (http::StatusCode, &'static str);
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let extensions = req.extensions();
-        extensions
+
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        parts
+            .extensions
             .get::<AuthSession<User, Type, Session, Pool>>()
             .cloned()
             .ok_or((
@@ -117,36 +115,33 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.remember_user(true).await;
+    ///  auth.remember_user(true);
     /// ```
     ///
-    pub async fn remember_user(&self, remember_me: bool) {
-        self.session.set_longterm(remember_me).await;
+    pub fn remember_user(&self, remember_me: bool) {
+        self.session.set_longterm(remember_me);
     }
 
     /// Sets the user id into the Session so it can auto login the user upon Axum request.
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.login_user(user.id).await;
+    ///  auth.login_user(user.id);
     /// ```
     ///
-    pub async fn login_user(&self, id: i64) {
-        let value = self.session.get::<i64>("user_auth_session_id").await;
-
-        if value != Some(id) {
-            self.session.set("user_auth_session_id", id).await;
-        }
+    pub fn login_user(&self, id: Type) {
+        self.session.set("user_auth_session_id", id);
+        self.session.renew();
     }
 
     /// Tells the system to clear the user so they get reloaded upon next Axum request.
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.cache_clear_user(user.id).await;
+    ///  auth.cache_clear_user(user.id);
     /// ```
     ///
-    pub async fn cache_clear_user(&self, id: Type) {
+    pub fn cache_clear_user(&self, id: Type) {
         let _ = self.cache.inner.remove(&id);
     }
 
@@ -154,10 +149,10 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.cache_clear_all().await;
+    ///  auth.cache_clear_all();
     /// ```
     ///
-    pub async fn cache_clear_all(&self) {
+    pub fn cache_clear_all(&self) {
         self.cache.inner.clear();
     }
 
@@ -165,10 +160,11 @@ where
     ///
     /// # Examples
     /// ```rust no_run
-    ///  auth.logout_user().await;
+    ///  auth.logout_user();
     /// ```
     ///
-    pub async fn logout_user(&self) {
-        self.session.remove("user_auth_session_id").await;
+    pub fn logout_user(&self) {
+        self.session.remove("user_auth_session_id");
+        self.session.renew();
     }
 }
