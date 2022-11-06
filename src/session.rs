@@ -118,8 +118,8 @@ where
     ///  auth.remember_user(true);
     /// ```
     ///
-    pub fn remember_user(&self, remember_me: bool) {
-        self.session.set_longterm(remember_me);
+    pub async fn remember_user(&self, remember_me: bool) {
+        self.session.set_longterm(remember_me).await;
     }
 
     /// Sets the user id into the Session so it can auto login the user upon Axum request.
@@ -129,9 +129,9 @@ where
     ///  auth.login_user(user.id);
     /// ```
     ///
-    pub fn login_user(&self, id: Type) {
-        self.session.set("user_auth_session_id", id);
-        self.session.renew();
+    pub async fn login_user(&self, id: Type) {
+        self.session.set("user_auth_session_id", id).await;
+        self.session.renew().await;
     }
 
     /// Tells the system to clear the user so they get reloaded upon next Axum request.
@@ -163,8 +163,8 @@ where
     ///  auth.logout_user();
     /// ```
     ///
-    pub fn logout_user(&self) {
-        self.session.remove("user_auth_session_id");
-        self.session.renew();
+    pub async fn logout_user(&self) {
+        self.session.remove("user_auth_session_id").await;
+        self.session.renew().await;
     }
 }
