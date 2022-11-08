@@ -81,7 +81,6 @@ where
 
             let id = axum_session
                 .get::<Type>(&config.session_id)
-                .await
                 .map_or(config.anonymous_user_id, Some)
                 .unwrap_or_else(|| Type::default());
 
