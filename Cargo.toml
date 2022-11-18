@@ -21,20 +21,20 @@ mysql-native = ["axum_database_sessions/mysql-native"]
 redis-db = ["axum_database_sessions/redis-db"]
 
 [dependencies]
-axum-core = {version = "0.3.0-rc.2", git = "https://github.com/tokio-rs/axum.git" }
-async-trait = "0.1.57"
-anyhow = "1.0.60"
+axum-core = {version = "0.3.0-rc.3", git = "https://github.com/tokio-rs/axum.git" }
+async-trait = "0.1.58"
+anyhow = "1.0.66"
 async-recursion = "1.0.0"
 http = "0.2.8"
-tower-layer = "0.3.1"
+tower-layer = "0.3.2"
 tower-service = "0.3.2"
-futures = "0.3.23"
+futures = "0.3.25"
 bytes = "1.2.1"
 http-body = "0.4.5"
-dashmap = "5.3.4"
-chrono = { version = "0.4.20", features = ["clock", "serde", "std"] }
-tokio = { version = "1.20.1", features = ["full"] }
-serde = "1.0.144"
+dashmap = "5.4.0"
+chrono = { version = "0.4.23", features = ["clock", "serde", "std"] }
+tokio = { version = "1.21.2", features = ["full"] }
+serde = "1.0.147"
 
 [dependencies.axum_database_sessions]
 #path = "D:/Sources/AxumSessions"
