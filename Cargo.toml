@@ -1,6 +1,6 @@
 [package]
 name = "axum_sessions_auth"
-version = "4.0.0"
+version = "5.0.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library."
 edition = "2021"
@@ -21,7 +21,7 @@ mysql-native = ["axum_database_sessions/mysql-native"]
 redis-db = ["axum_database_sessions/redis-db"]
 
 [dependencies]
-axum-core = {version = "0.3.0-rc.3", git = "https://github.com/tokio-rs/axum.git" }
+axum-core = "0.3.0"
 async-trait = "0.1.58"
 anyhow = "1.0.66"
 async-recursion = "1.0.0"
@@ -38,9 +38,9 @@ serde = "1.0.147"
 
 [dependencies.axum_database_sessions]
 #path = "D:/Sources/AxumSessions"
-git = "https://github.com/AscendingCreations/AxumSessions.git"
+#git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "4.1.0"
+version = "5.0.0"
 default-features = false
 
 [package.metadata.docs.rs]
