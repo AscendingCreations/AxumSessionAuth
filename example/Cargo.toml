@@ -1,0 +1,30 @@
+[package]
+name = "example"
+version = "0.0.1"
+authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+axum = {version = "0.6.1"}
+tokio = { version = "1.21.2", features = ["full", "tracing"] }
+async-trait = "0.1.58"
+sqlx = { version = "0.6.2", features = [
+    "macros",
+    "offline",
+    "migrate",
+    "mssql",
+    "postgres",
+    "sqlite",
+    "all-types",
+    "runtime-tokio-rustls",
+] }
+anyhow = "1.0.66"
+serde = "1.0.147"
+
+[dependencies.axum_database_sessions]
+version = "5.0.0"
+features = ["sqlite-rustls"]
+
+[dependencies.axum_sessions_auth]
+path = "../"
+features = ["sqlite-rustls"]

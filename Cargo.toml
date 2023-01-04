@@ -1,3 +1,9 @@
+[workspace]
+members = [
+    ".",
+    "example",
+]
+
 [package]
 name = "axum_sessions_auth"
 version = "5.0.0"
