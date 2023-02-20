@@ -22,7 +22,7 @@ anyhow = "1.0.66"
 serde = "1.0.147"
 
 [dependencies.axum_database_sessions]
-version = "6.0.0"
+version = "7.0.0"
 features = ["sqlite-rustls"]
 
 [dependencies.axum_sessions_auth]

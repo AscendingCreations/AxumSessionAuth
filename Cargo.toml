@@ -46,7 +46,7 @@ serde = "1.0.152"
 #path = "D:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "6.0.0"
+version = "7.0.0"
 default-features = false
 
 [package.metadata.docs.rs]

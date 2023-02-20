@@ -2,26 +2,26 @@ use crate::AuthCache;
 use anyhow::Error;
 use async_trait::async_trait;
 use axum_core::extract::FromRequestParts;
-use axum_database_sessions::{AxumDatabasePool, AxumSession};
+use axum_database_sessions::{DatabasePool, Session};
 use http::{self, request::Parts, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData};
 
 /// AuthSession that is generated when a user is routed via Axum
 ///
-/// Contains the loaded user data, ID and an AxumSession.
+/// Contains the loaded user data, ID and an Session.
 ///
 #[derive(Debug, Clone)]
-pub struct AuthSession<User, Type, Session, Pool>
+pub struct AuthSession<User, Type, Sess, Pool>
 where
     User: Authentication<User, Type, Pool> + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
-    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub id: Type,
     pub current_user: Option<User>,
-    pub session: AxumSession<Session>,
+    pub session: Session<Sess>,
     pub(crate) cache: AuthCache<User, Type, Pool>,
     pub phantom: PhantomData<Pool>,
 }
@@ -40,12 +40,12 @@ where
 }
 
 #[async_trait]
-impl<S, User, Type, Session, Pool> FromRequestParts<S> for AuthSession<User, Type, Session, Pool>
+impl<S, User, Type, Sess, Pool> FromRequestParts<S> for AuthSession<User, Type, Sess, Pool>
 where
     User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
-    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
     S: Send + Sync,
 {
     type Rejection = (http::StatusCode, &'static str);
@@ -53,7 +53,7 @@ where
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         parts
             .extensions
-            .get::<AuthSession<User, Type, Session, Pool>>()
+            .get::<AuthSession<User, Type, Sess, Pool>>()
             .cloned()
             .ok_or((
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -62,12 +62,12 @@ where
     }
 }
 
-impl<User, Type, Session, Pool> AuthSession<User, Type, Session, Pool>
+impl<User, Type, Sess, Pool> AuthSession<User, Type, Sess, Pool>
 where
     User: Authentication<User, Type, Pool> + Clone + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
-    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     /// Checks if the user is Authenticated
     ///
@@ -111,7 +111,7 @@ where
         }
     }
 
-    /// Sets the AxumSession Data to be saved for Long Term
+    /// Sets the Session Data to be saved for Long Term
     ///
     /// # Examples
     /// ```rust no_run

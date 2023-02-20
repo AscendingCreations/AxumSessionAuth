@@ -1,5 +1,5 @@
 #![doc = include_str!("../README.md")]
-///This Library Requires that AxumDatabaseSessions is used as an active layer.
+///This Library Requires that DatabaseSessions is used as an active layer.
 ///
 mod auth;
 mod cache;
@@ -11,7 +11,7 @@ mod user;
 
 pub use auth::{Auth, HasPermission, Rights};
 pub use cache::AuthCache;
-pub use config::AxumAuthConfig;
+pub use config::AuthConfig;
 pub use layer::AuthSessionLayer;
 pub use service::AuthSessionService;
 pub use session::{AuthSession, Authentication};

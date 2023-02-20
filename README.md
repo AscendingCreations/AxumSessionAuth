@@ -1,11 +1,18 @@
-# axum_sessions_auth
+<h1 align="center">
+ Sessions Auth
+</h1>
 
-Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library.
+Library to Provide a User Authentication and privilege Token Checks. It requires the _Database_Sessions library.
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
 The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side.
 
 [![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/crates/v/axum_sessions_auth?style=plastic)](https://crates.io/crates/axum_sessions_auth)
 [![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
+
+- Wraps `axum_database_sessions` for data management serverside.
+- Right Management API
+- Auto load of user Data upon Page loads.
+- User Data cache to Avoid Repeated Database calls when not needed.
 
 # Help
 
@@ -13,7 +20,7 @@ If you need help with this library or have suggestions please go to our [Discord
 
 ## Install
 
-Axum Sessions Authentication uses [`tokio`] runtime and ['axum_database_sessions'];
+ Sessions Authentication uses [`tokio`] runtime and ['axum_database_sessions'];
 
 [`tokio`]: https://github.com/tokio-rs/tokio
 [`native-tls`]: https://crates.io/crates/native-tls
@@ -25,7 +32,7 @@ Axum Sessions Authentication uses [`tokio`] runtime and ['axum_database_sessions
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_sessions_auth = { version = "6.0.0", features = [ "postgres-rustls" ] }
+axum_sessions_auth = { version = "7.0.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
@@ -50,8 +57,8 @@ axum_sessions_auth = { version = "6.0.0", features = [ "postgres-rustls" ] }
 ```rust
 use sqlx::{PgPool, ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
-use axum_database_sessions::{AxumPgPool, AxumSession, AxumSessionConfig, AxumSessionLayer, AxumDatabasePool};
-use axum_sessions_auth::{AuthSession, AuthSessionLayer, Authentication, AxumAuthConfig};
+use axum_database_sessions::{SessionPgPool, Session, SessionConfig, SessionLayer, DatabasePool};
+use axum_sessions_auth::{AuthSession, AuthSessionLayer, Authentication, AuthConfig};
 use axum::{
     Router,
     routing::get,
@@ -62,17 +69,17 @@ async fn main() {
     # async {
     let poll = connect_to_database().await.unwrap();
 
-    let session_config = AxumSessionConfig::default()
+    let session_config = SessionConfig::default()
         .with_database("test")
         .with_table_name("test_table");
-    let auth_config = AxumAuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
-    let session_store = AxumSessionStore::<AxumPgPool>::new(Some(poll.clone().into()), session_config);
+    let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
+    let session_store = SessionStore::<SessionPgPool>::new(Some(poll.clone().into()), session_config);
 
     // Build our application with some routes
     let app = Router::new()
         .route("/greet/:name", get(greet))
-        .layer(AxumSessionLayer::new(session_store))
-        .layer(AuthSessionLayer::<User, i64, AxumPgPool, PgPool>::new(Some(poll)).with_config(auth_config));
+        .layer(SessionLayer::new(session_store))
+        .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(poll)).with_config(auth_config));
 
     // Run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -86,7 +93,7 @@ async fn main() {
 
 // We can get the Method to compare with what Methods we allow. Useful if this supports multiple methods.
 // When called auth is loaded in the background for you.
-async fn greet(method: Method, auth: AuthSession<User, i64, AxumPgPool, PgPool>) -> &'static str {
+async fn greet(method: Method, auth: AuthSession<User, i64, SessionPgPool, PgPool>) -> &'static str {
     let mut count: usize = session.get("count").unwrap_or(0);
     count += 1;
 

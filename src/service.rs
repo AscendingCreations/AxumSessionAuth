@@ -1,10 +1,10 @@
-use crate::{AuthCache, AuthSession, AuthUser, Authentication, AxumAuthConfig};
+use crate::{AuthCache, AuthConfig, AuthSession, AuthUser, Authentication};
 use axum_core::{
     body::{self, BoxBody},
     response::Response,
     BoxError,
 };
-use axum_database_sessions::{AxumDatabasePool, AxumSession};
+use axum_database_sessions::{DatabasePool, Session};
 use bytes::Bytes;
 use chrono::Utc;
 use futures::future::BoxFuture;
@@ -22,26 +22,26 @@ use std::{
 use tower_service::Service;
 
 #[derive(Clone)]
-pub struct AuthSessionService<S, User, Type, Session, Pool>
+pub struct AuthSessionService<S, User, Type, Sess, Pool>
 where
     User: Authentication<User, Type, Pool> + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
-    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     pub(crate) pool: Option<Pool>,
-    pub(crate) config: AxumAuthConfig<Type>,
+    pub(crate) config: AuthConfig<Type>,
     pub(crate) cache: AuthCache<User, Type, Pool>,
     pub(crate) inner: S,
-    pub phantom_session: PhantomData<Session>,
+    pub phantom_session: PhantomData<Sess>,
 }
 
-impl<S, User, Type, Session, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
-    for AuthSessionService<S, User, Type, Session, Pool>
+impl<S, User, Type, Sess, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
+    for AuthSessionService<S, User, Type, Sess, Pool>
 where
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
-    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
     User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     S: Service<Request<ReqBody>, Response = Response<ResBody>, Error = Infallible>
         + Clone
@@ -69,7 +69,7 @@ where
         let mut ready_inner = std::mem::replace(&mut self.inner, not_ready_inner);
 
         Box::pin(async move {
-            let axum_session = match req.extensions().get::<AxumSession<Session>>().cloned() {
+            let axum_session = match req.extensions().get::<Session<Sess>>().cloned() {
                 Some(session) => session,
                 None => {
                     return Ok(Response::builder()
@@ -134,13 +134,13 @@ where
     }
 }
 
-impl<S, User, Type, Session, Pool> fmt::Debug for AuthSessionService<S, User, Type, Session, Pool>
+impl<S, User, Type, Sess, Pool> fmt::Debug for AuthSessionService<S, User, Type, Sess, Pool>
 where
     S: fmt::Debug,
     User: Authentication<User, Type, Pool> + fmt::Debug + Clone + Send,
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
-    Session: AxumDatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
+    Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("AuthSessionService")

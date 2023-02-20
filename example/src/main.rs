@@ -1,8 +1,6 @@
 use async_trait::async_trait;
 use axum::{http::Method, routing::get, Router};
-use axum_database_sessions::{
-    AxumSessionConfig, AxumSessionLayer, AxumSessionStore, AxumSqlitePool,
-};
+use axum_database_sessions::{SessionConfig, SessionLayer, SessionSqlitePool, SessionStore};
 use axum_sessions_auth::*;
 use serde::{Deserialize, Serialize};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool, SqlitePoolOptions};
@@ -181,10 +179,10 @@ async fn main() {
 
     //This Defaults as normal Cookies.
     //To enable Private cookies for integrity, and authenticity please check the next Example.
-    let session_config = AxumSessionConfig::default().with_table_name("test_table");
-    let auth_config = AxumAuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
+    let session_config = SessionConfig::default().with_table_name("test_table");
+    let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
     let session_store =
-        AxumSessionStore::<AxumSqlitePool>::new(Some(pool.clone().into()), session_config);
+        SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config);
 
     //Create the Database table for storing our Session Data.
     session_store.initiate().await.unwrap();
@@ -197,10 +195,10 @@ async fn main() {
         .route("/login", get(login))
         .route("/perm", get(perm))
         .layer(
-            AuthSessionLayer::<User, i64, AxumSqlitePool, SqlitePool>::new(Some(pool))
+            AuthSessionLayer::<User, i64, SessionSqlitePool, SqlitePool>::new(Some(pool))
                 .with_config(auth_config),
         )
-        .layer(AxumSessionLayer::new(session_store));
+        .layer(SessionLayer::new(session_store));
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -211,19 +209,22 @@ async fn main() {
         .unwrap();
 }
 
-async fn greet(auth: AuthSession<User, i64, AxumSqlitePool, SqlitePool>) -> String {
+async fn greet(auth: AuthSession<User, i64, SessionSqlitePool, SqlitePool>) -> String {
     format!(
         "Hello {}, Try logging in via /login or testing permissions via /perm",
         auth.current_user.unwrap().username
     )
 }
 
-async fn login(auth: AuthSession<User, i64, AxumSqlitePool, SqlitePool>) -> String {
+async fn login(auth: AuthSession<User, i64, SessionSqlitePool, SqlitePool>) -> String {
     auth.login_user(2);
     "You are logged in as a User please try /perm to check permissions".to_owned()
 }
 
-async fn perm(method: Method, auth: AuthSession<User, i64, AxumSqlitePool, SqlitePool>) -> String {
+async fn perm(
+    method: Method,
+    auth: AuthSession<User, i64, SessionSqlitePool, SqlitePool>,
+) -> String {
     let current_user = auth.current_user.clone().unwrap_or_default();
 
     //lets check permissions only and not worry about if they are anon or not
