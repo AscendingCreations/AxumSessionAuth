@@ -25,7 +25,7 @@ Axum Sessions Authentication uses [`tokio`] runtime and ['axum_database_sessions
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_sessions_auth = { version = "5.0.0", features = [ "postgres-rustls" ] }
+axum_sessions_auth = { version = "6.0.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
