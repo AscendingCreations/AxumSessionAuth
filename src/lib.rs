@@ -17,4 +17,4 @@ pub use service::AuthSessionService;
 pub use session::{AuthSession, Authentication};
 pub(crate) use user::AuthUser;
 
-pub use axum_database_sessions::databases::*;
+pub use axum_session::databases::*;

@@ -1,15 +1,15 @@
 <h1 align="center">
- Sessions Auth
+ Axum Session Auth
 </h1>
 
-Library to Provide a User Authentication and privilege Token Checks. It requires the _Database_Sessions library.
+Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library.
 This library will help by making it so User ID or authorizations are not stored on the Client side but rather on the Server side.
-The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side.
+The Authorization is linked by the Clients Serverside Session ID which is stored on the Client side. Formally known as Axum Sessions Auth
 
-[![https://crates.io/crates/axum_sessions_auth](https://img.shields.io/crates/v/axum_sessions_auth?style=plastic)](https://crates.io/crates/axum_sessions_auth)
-[![Docs](https://docs.rs/axum_sessions_auth/badge.svg)](https://docs.rs/axum_sessions_auth)
+[![https://crates.io/crates/axum_session_auth](https://img.shields.io/crates/v/axum_session_auth?style=plastic)](https://crates.io/crates/axum_session_auth)
+[![Docs](https://docs.rs/axum_session_auth/badge.svg)](https://docs.rs/axum_session_auth)
 
-- Wraps `axum_database_sessions` for data management serverside.
+- Wraps `axum_session` for data management serverside.
 - Right Management API
 - Auto load of user Data upon Page loads.
 - User Data cache to Avoid Repeated Database calls when not needed.
@@ -20,19 +20,19 @@ If you need help with this library or have suggestions please go to our [Discord
 
 ## Install
 
- Sessions Authentication uses [`tokio`] runtime and ['axum_database_sessions'];
+ Sessions Authentication uses [`tokio`] runtime and ['axum_session'];
 
 [`tokio`]: https://github.com/tokio-rs/tokio
 [`native-tls`]: https://crates.io/crates/native-tls
 [`rustls`]: https://crates.io/crates/rustls
 [`sqlx`]: https://crates.io/crates/sqlx
-[`axum_database_sessions`]: https://crates.io/crates/axum_database_sessions
+[`axum_session`]: https://crates.io/crates/axum_session
 
 ```toml
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_sessions_auth = { version = "7.0.0", features = [ "postgres-rustls" ] }
+axum_session_auth = { version = "0.1.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
@@ -57,8 +57,8 @@ axum_sessions_auth = { version = "7.0.0", features = [ "postgres-rustls" ] }
 ```rust
 use sqlx::{PgPool, ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
-use axum_database_sessions::{SessionPgPool, Session, SessionConfig, SessionLayer, DatabasePool};
-use axum_sessions_auth::{AuthSession, AuthSessionLayer, Authentication, AuthConfig};
+use axum_session::{SessionPgPool, Session, SessionConfig, SessionLayer, DatabasePool};
+use axum_session_auth::{AuthSession, AuthSessionLayer, Authentication, AuthConfig};
 use axum::{
     Router,
     routing::get,

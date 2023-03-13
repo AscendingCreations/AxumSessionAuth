@@ -7,7 +7,7 @@ use std::hash::Hash;
 ///
 /// # Examples
 /// ```rust
-/// use axum_sessions_auth::AuthConfig;
+/// use axum_session_auth::AuthConfig;
 ///
 /// let config = AuthConfig::<i64>::default();
 /// ```
@@ -56,7 +56,7 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use axum_sessions_auth::AuthConfig;
+    /// use axum_session_auth::AuthConfig;
     ///
     /// let config = AuthConfig::<i64>::default().set_cache(true);
     /// ```
@@ -72,7 +72,7 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use axum_sessions_auth::AuthConfig;
+    /// use axum_session_auth::AuthConfig;
     ///
     /// let config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(0));
     /// ```
@@ -89,7 +89,7 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use axum_sessions_auth::AuthConfig;
+    /// use axum_session_auth::AuthConfig;
     /// use chrono::Duration;
     ///
     /// let config = AuthConfig::<i64>::default().with_max_age(Some(Duration::days(2)));
@@ -105,7 +105,7 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use axum_sessions_auth::AuthConfig;
+    /// use axum_session_auth::AuthConfig;
     ///
     /// let config = AuthConfig::<i64>::default().with_session_id("www.helpme.com".to_string());
     /// ```

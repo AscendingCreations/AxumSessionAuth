@@ -1,5 +1,5 @@
-use crate::{AuthCache, AuthSessionService, Authentication, AuthConfig};
-use axum_database_sessions::DatabasePool;
+use crate::{AuthCache, AuthConfig, AuthSessionService, Authentication};
+use axum_session::DatabasePool;
 use chrono::{Duration, Utc};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData};

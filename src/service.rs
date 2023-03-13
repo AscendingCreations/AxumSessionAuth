@@ -4,7 +4,7 @@ use axum_core::{
     response::Response,
     BoxError,
 };
-use axum_database_sessions::{DatabasePool, Session};
+use axum_session::{DatabasePool, Session};
 use bytes::Bytes;
 use chrono::Utc;
 use futures::future::BoxFuture;

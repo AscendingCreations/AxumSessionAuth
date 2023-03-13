@@ -21,10 +21,10 @@ sqlx = { version = "0.6.2", features = [
 anyhow = "1.0.66"
 serde = "1.0.147"
 
-[dependencies.axum_database_sessions]
-version = "7.0.0"
+[dependencies.axum_session]
+version = "0.1.0"
 features = ["sqlite-rustls"]
 
-[dependencies.axum_sessions_auth]
+[dependencies.axum_session_auth]
 path = "../"
 features = ["sqlite-rustls"]

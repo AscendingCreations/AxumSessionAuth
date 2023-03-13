@@ -5,30 +5,30 @@ members = [
 ]
 
 [package]
-name = "axum_sessions_auth"
-version = "7.0.0"
+name = "axum_session_auth"
+version = "0.1.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
-description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Database_Sessions library."
+description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.rs/axum_sessions_auth"
+documentation = "https://docs.rs/axum_session_auth"
 keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/AxumSessionsAuth"
 
 [features]
 default = ["postgres-rustls"]
-sqlite-rustls = ["axum_database_sessions/sqlite-rustls"]
-sqlite-native = ["axum_database_sessions/sqlite-native"]
-postgres-rustls = ["axum_database_sessions/postgres-rustls"]
-postgres-native = ["axum_database_sessions/postgres-native"]
-mysql-rustls = ["axum_database_sessions/mysql-rustls"]
-mysql-native = ["axum_database_sessions/mysql-native"]
-redis-db = ["axum_database_sessions/redis-db"]
+sqlite-rustls = ["axum_session/sqlite-rustls"]
+sqlite-native = ["axum_session/sqlite-native"]
+postgres-rustls = ["axum_session/postgres-rustls"]
+postgres-native = ["axum_session/postgres-native"]
+mysql-rustls = ["axum_session/mysql-rustls"]
+mysql-native = ["axum_session/mysql-native"]
+redis-db = ["axum_session/redis-db"]
 
 [dependencies]
 axum-core = "0.3.2"
-async-trait = "0.1.64"
+async-trait = "0.1.66"
 anyhow = "1.0.69"
 async-recursion = "1.0.2"
 http = "0.2.9"
@@ -38,15 +38,15 @@ futures = "0.3.26"
 bytes = "1.4.0"
 http-body = "0.4.5"
 dashmap = "5.4.0"
-chrono = { version = "0.4.23", features = ["clock", "serde", "std"] }
-tokio = { version = "1.25.0", features = ["full"] }
-serde = "1.0.152"
+chrono = { version = "0.4.24", features = ["clock", "serde", "std"] }
+tokio = { version = "1.26.0", features = ["full"] }
+serde = "1.0.155"
 
-[dependencies.axum_database_sessions]
+[dependencies.axum_session]
 #path = "D:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "7.0.0"
+version = "0.1.0"
 default-features = false
 
 [package.metadata.docs.rs]

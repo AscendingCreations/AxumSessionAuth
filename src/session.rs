@@ -2,7 +2,7 @@ use crate::AuthCache;
 use anyhow::Error;
 use async_trait::async_trait;
 use axum_core::extract::FromRequestParts;
-use axum_database_sessions::{DatabasePool, Session};
+use axum_session::{DatabasePool, Session};
 use http::{self, request::Parts, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData};
