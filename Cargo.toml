@@ -10,7 +10,7 @@ version = "0.1.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 readme = "README.md"
 documentation = "https://docs.rs/axum_session_auth"
 keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
@@ -25,6 +25,18 @@ postgres-native = ["axum_session/postgres-native"]
 mysql-rustls = ["axum_session/mysql-rustls"]
 mysql-native = ["axum_session/mysql-native"]
 redis-db = ["axum_session/redis-db"]
+surrealdb-rocksdb =  ["axum_session/surrealdb-rocksdb"]
+surrealdb-tikv =  ["axum_session/surrealdb-tikv"]
+surrealdb-indxdb =  ["axum_session/surrealdb-indxdb"]
+surrealdb-fdb-5_1 =  ["axum_session/surrealdb-fdb-5_1"]
+surrealdb-fdb-5_2 =  ["axum_session/surrealdb-fdb-5_2"]
+surrealdb-fdb-6_0 =  ["axum_session/surrealdb-fdb-6_0"]
+surrealdb-fdb-6_1 =  ["axum_session/surrealdb-fdb-6_1"]
+surrealdb-fdb-6_2 =  ["axum_session/surrealdb-fdb-6_2"]
+surrealdb-fdb-6_3 =  ["axum_session/surrealdb-fdb-6_3"]
+surrealdb-fdb-7_0 =  ["axum_session/surrealdb-fdb-7_0"]
+surrealdb-fdb-7_1 =  ["axum_session/surrealdb-fdb-7_1"]
+surrealdb-mem =  ["axum_session/surrealdb-mem"]
 
 [dependencies]
 axum-core = "0.3.2"

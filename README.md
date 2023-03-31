@@ -16,7 +16,7 @@ The Authorization is linked by the Clients Serverside Session ID which is stored
 
 # Help
 
-If you need help with this library or have suggestions please go to our [Discord Group](https://discord.gg/xKkm7UhM36)
+If you need help with this library or have suggestions please go to our [Discord Group](https://discord.gg/gVXNDwpS3Z)
 
 ## Install
 
