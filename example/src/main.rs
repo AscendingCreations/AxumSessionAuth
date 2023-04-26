@@ -23,7 +23,7 @@ impl Default for User {
     fn default() -> Self {
         let mut permissions = HashSet::new();
 
-        permissions.insert("category:view".to_owned());
+        permissions.insert("Category::View".to_owned());
 
         Self {
             id: 1,
