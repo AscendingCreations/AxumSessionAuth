@@ -104,56 +104,56 @@ async fn main() {
 // We can get the Method to compare with what Methods we allow. Useful if this supports multiple methods.
 // When called auth is loaded in the background for you.
 async fn greet(method: Method, auth: AuthSession<User, i64, SessionPgPool, PgPool>) -> &'static str {
-    let mut count: usize = session.get("count").unwrap_or(0);
+    let mut count: usize = auth.session.get("count").unwrap_or(0);
+    
+    // We will get the user if not then a guest which should be our default.
+    let current_user = auth.current_user.clone().unwrap_or_default();
     count += 1;
 
     // Session is Also included with Auth so no need to require it in the function arguments if your using
     // AuthSession.
     auth.session.set("count", count);
 
-    // If for some reason you needed to update your Users Permissions or data then you will want to clear the user cache if it is enabled.
+    // If for some reason you needed to update your Users Permissions 
+    // or data that is cached then you will want to clear the user cache if it is enabled.
     // The user Cache is enabled by default. To clear simply use.
     auth.cache_clear_user(1).await;
-    //or to clear all for a large update
+    // To clear all cached user data for a large update
     auth.cache_clear_all().await;
 
-    if let Some(cur_user) = current_user {
-        if !Auth::<User, i64, PgPool>::build([Method::Get], false)
-            .requires(Rights::none([
-                Rights::permission("Token::UseAdmin"),
-                Rights::permission("Token::ModifyPerms"),
-            ]))
-            .validate(&cur_user, &method, None)
-            .await
-        {
-            return format!("No Permissions! for {}", cur_user.username)[];
-        }
-
-        let username = if !auth.is_authenticated() {
-            // Set the user ID of the User to the Session so it can be Auto Loaded the next load or redirect
-            auth.login_user(2);
-            "".to_string()
-        } else {
-            // If the user is loaded and is Authenticated then we can use it.
-            if let Some(user) = auth.current_user {
-                user.username.clone()
-            } else {
-                "".to_string()
-            }
-        };
-
-        format!("{}-{}", username, count)[..]
-    } else {
-        if !auth.is_authenticated() {
-            // Set the user ID of the User to the Session so it can be Auto Loaded the next load or redirect
-            auth.login_user(2);
-            // Set the session to be long term. Good for Remember me type instances.
-            auth.remember_user(true);
-            // Redirect here after login if we did indeed login.
-        }
-
-        "No Permissions!"
+    // This is our Auth Permission Builder and Rights Checker. We Build it with the Methods to check for
+    // So in this case Method::Get. If they loaded the page with Method::Post it will fail with the no Permissions! error.
+    // the false is build it to deturmine is Authentication is Required or not. this runs is_authenticated() when true. 
+    if !Auth::<User, i64, PgPool>::build([Method::Get], false)
+        // We Prepare what Rights we accept or Deny from Guest or Other users.
+        .requires(Rights::none([
+            Rights::permission("Token::UseAdmin"),
+            Rights::permission("Token::ModifyPerms"),
+        ]))
+        // We then Validate the Current user, and Method. We also pass our Database along for database permissions checking
+        // if required otherwise None.
+        .validate(&current_user, &method, None)
+        .await
+    {
+        // We return No Permissions message if validate fails for any reason.
+        return format!("No Permissions! for {}", current_user.username)[];
     }
+
+    // Since we had the is_authenticated set to false Above we will instead use it to login our Guest user. 
+    if !auth.is_authenticated() {
+        // Set the user ID of the User to the Session so it can be Auto Loaded the next load or redirect
+        auth.login_user(2);
+        // Set the session to be long term. Good for Remember me type instances.
+        auth.remember_user(true);
+        // We dont currently know the username until the next page access.
+        // so Normally we would Redirect here after login if we did indeed login.
+        // But in this case we will just use a let the user know to reload the page for the example.
+        "You have Logged in! Please Refreash the page to display the username and counter."
+    } else {
+        // On Page Reload if the user has all the permissions and the Method is correct and they are logged in
+        // It will display their username and a count that increments with each page refreash.
+        format!("{}-{}", current_user.username, count)[..]
+    };
 }
 
 #[derive(Clone, Debug)]
@@ -177,6 +177,8 @@ impl HasPermission<PgPool> for User {
 
 #[async_trait]
 impl Authentication<User, i64, PgPool> for User {
+    // This is ran when the user has logged in and has not yet been Cached in the system.
+    // Once ran it will load and cache the user.
     async fn load_user(userid: i64, _pool: Option<&PgPool>) -> Result<User> {
         Ok(User {
             id: userid,
@@ -185,6 +187,7 @@ impl Authentication<User, i64, PgPool> for User {
         })
     }
 
+    // This function is used internally to deturmine if they are logged in or not.
     fn is_authenticated(&self) -> bool {
         !self.anonymous
     }
