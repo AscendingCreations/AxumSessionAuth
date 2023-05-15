@@ -39,9 +39,9 @@ where
         Self {
             pool,
             config: AuthConfig::default(),
-            phantom_user: PhantomData::default(),
-            phantom_session: PhantomData::default(),
-            phantom_type: PhantomData::default(),
+            phantom_user: PhantomData,
+            phantom_session: PhantomData,
+            phantom_type: PhantomData,
         }
     }
 
@@ -67,7 +67,7 @@ where
             config: self.config.clone(),
             cache: AuthCache::<User, Type, Pool>::new(Utc::now() + Duration::hours(1)),
             inner,
-            phantom_session: PhantomData::default(),
+            phantom_session: PhantomData,
         }
     }
 }

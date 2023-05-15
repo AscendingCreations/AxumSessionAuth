@@ -123,7 +123,7 @@ where
                 current_user,
                 cache,
                 session: axum_session,
-                phantom: PhantomData::default(),
+                phantom: PhantomData,
             };
 
             // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
