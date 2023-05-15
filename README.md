@@ -52,15 +52,15 @@ axum_session_auth = { version = "0.2.0", features = [ "postgres-rustls" ] }
 
 `redis-db`:  `redis 0.23.0` session support.
 
-`surrealdb-rocksdb`: `1.0.0-beta.9+20230402` support for rocksdb.
+`surrealdb-rocksdb`: `1.0.0-beta.9` support for rocksdb.
 
-`surrealdb-tikv` : `1.0.0-beta.9+20230402` support for tikv.
+`surrealdb-tikv` : `1.0.0-beta.9` support for tikv.
 
-`surrealdb-indxdb` : `1.0.0-beta.9+20230402` support for indxdb.
+`surrealdb-indxdb` : `1.0.0-beta.9` support for indxdb.
 
-`surrealdb-fdb-?_?` : `1.0.0-beta.9+20230402` support for fdb versions 5_1, 5_2, 6_0, 6_1, 6_2, 6_3, 7_0, 7_1. Replace ?_? with version.
+`surrealdb-fdb-?_?` : `1.0.0-beta.9` support for fdb versions 5_1, 5_2, 6_0, 6_1, 6_2, 6_3, 7_0, 7_1. Replace ?_? with version.
 
-`surrealdb-mem` : `1.0.0-beta.9+20230402` support for mem.
+`surrealdb-mem` : `1.0.0-beta.9` support for mem.
 
 # Example
 
