@@ -6,7 +6,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
@@ -37,28 +37,29 @@ surrealdb-fdb-6_3 =  ["axum_session/surrealdb-fdb-6_3"]
 surrealdb-fdb-7_0 =  ["axum_session/surrealdb-fdb-7_0"]
 surrealdb-fdb-7_1 =  ["axum_session/surrealdb-fdb-7_1"]
 surrealdb-mem =  ["axum_session/surrealdb-mem"]
+key-store = ["axum_session/key-store"]
 
 [dependencies]
-axum-core = "0.3.2"
-async-trait = "0.1.66"
-anyhow = "1.0.69"
-async-recursion = "1.0.2"
+axum-core = "0.3.4"
+async-trait = "0.1.71"
+anyhow = "1.0.71"
+async-recursion = "1.0.4"
 http = "0.2.9"
 tower-layer = "0.3.2"
 tower-service = "0.3.2"
-futures = "0.3.26"
+futures = "0.3.28"
 bytes = "1.4.0"
 http-body = "0.4.5"
 dashmap = "5.4.0"
-chrono = { version = "0.4.24", default-features = false, features = ["clock", "serde", "std"] }
-tokio = { version = "1.26.0", features = ["full"] }
-serde = "1.0.155"
+chrono = { version = "0.4.26", default-features = false, features = ["clock", "serde", "std"] }
+tokio = { version = "1.29.1", features = ["full"] }
+serde = "1.0.167"
 
 [dependencies.axum_session]
 #path = "D:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.2.2"
+version = "0.3.0"
 default-features = false
 
 [package.metadata.docs.rs]

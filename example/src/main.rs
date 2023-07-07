@@ -126,7 +126,7 @@ impl User {
         sqlx::query(
             r#"
                 INSERT INTO users
-                    (id, anonymous, username) SELECT 2, true, 'Test'
+                    (id, anonymous, username) SELECT 2, false, 'Test'
                 ON CONFLICT(id) DO UPDATE SET
                     anonymous = EXCLUDED.anonymous,
                     username = EXCLUDED.username
@@ -182,7 +182,9 @@ async fn main() {
     let session_config = SessionConfig::default().with_table_name("test_table");
     let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
     let session_store =
-        SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config);
+        SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config)
+            .await
+            .unwrap();
 
     //Create the Database table for storing our Session Data.
     session_store.initiate().await.unwrap();
