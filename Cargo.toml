@@ -1,7 +1,8 @@
 [workspace]
 members = [
     ".",
-    "example",
+    "examples/sqlx-example/",
+    "examples/NoPoolType/",
 ]
 
 [package]
