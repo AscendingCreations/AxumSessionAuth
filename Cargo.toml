@@ -7,7 +7,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
@@ -15,7 +15,7 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 documentation = "https://docs.rs/axum_session_auth"
 keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
-repository = "https://github.com/AscendingCreations/AxumSessionsAuth"
+repository = "https://github.com/AscendingCreations/AxumSessionAuth"
 
 [features]
 default = ["postgres-rustls"]

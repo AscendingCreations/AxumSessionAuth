@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 0.3.1 (7. August, 2023)
+### Changed
+- Updated github link to renamed repo.
+
 ## 0.3.0 (7. July, 2023)
 ### Changed
 - Updated to axum_session 0.3.0.
