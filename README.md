@@ -56,9 +56,7 @@ axum_session_auth = { version = "0.3.0", features = [ "postgres-rustls" ] }
 
 `surrealdb-tikv` : `1.0.0-beta.9` support for tikv.
 
-`surrealdb-indxdb` : `1.0.0-beta.9` support for indxdb.
-
-`surrealdb-fdb-?_?` : `1.0.0-beta.9` support for fdb versions 5_1, 5_2, 6_0, 6_1, 6_2, 6_3, 7_0, 7_1. Replace ?_? with version.
+`surrealdb-fdb-?_?` : `1.0.0-beta.9` support for fdb versions 6_1, 6_2, 6_3, 7_0, 7_1. Replace ?_? with version.
 
 `surrealdb-mem` : `1.0.0-beta.9` support for mem.
 
