@@ -39,25 +39,25 @@ key-store = ["axum_session/key-store"]
 
 [dependencies]
 axum-core = "0.3.4"
-async-trait = "0.1.71"
-anyhow = "1.0.71"
-async-recursion = "1.0.4"
+async-trait = "0.1.73"
+anyhow = "1.0.75"
+async-recursion = "1.0.5"
 http = "0.2.9"
 tower-layer = "0.3.2"
 tower-service = "0.3.2"
 futures = "0.3.28"
 bytes = "1.4.0"
 http-body = "0.4.5"
-dashmap = "5.4.0"
-chrono = { version = "0.4.26", default-features = false, features = ["clock", "serde", "std"] }
-tokio = { version = "1.29.1", features = ["full"] }
-serde = "1.0.167"
+dashmap = "5.5.3"
+chrono = { version = "0.4.28", default-features = false, features = ["clock", "serde", "std"] }
+tokio = { version = "1.32.0", features = ["full"] }
+serde = "1.0.188"
 
 [dependencies.axum_session]
 #path = "D:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.3.0"
+version = "0.4.0"
 default-features = false
 
 [package.metadata.docs.rs]
