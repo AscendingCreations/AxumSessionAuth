@@ -35,7 +35,7 @@ type NullPool = Arc<Option<()>>;
 
 #[async_trait]
 impl Authentication<User, i64, NullPool> for User {
-    async fn load_user(userid: i64, pool: Option<&NullPool>) -> Result<User, anyhow::Error> {
+    async fn load_user(userid: i64, _pool: Option<&NullPool>) -> Result<User, anyhow::Error> {
         if userid == 1 {
             Ok(User::default())
         } else {
@@ -80,13 +80,13 @@ async fn main() {
     //To enable Private cookies for integrity, and authenticity please check the next Example.
     let session_config = SessionConfig::default().with_table_name("test_table");
     let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
+
+    // create SessionStore and initiate the database tables
     let session_store =
         SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config)
             .await
             .unwrap();
 
-    //Create the Database table for storing our Session Data.
-    session_store.initiate().await.unwrap();
     let nullpool = Arc::new(Option::None);
 
     // build our application with some routes
