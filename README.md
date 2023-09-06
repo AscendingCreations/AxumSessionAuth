@@ -32,7 +32,7 @@ If you need help with this library or have suggestions please go to our [Discord
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.4.0", features = [ "postgres-rustls" ] }
+axum_session_auth = { version = "0.5.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags

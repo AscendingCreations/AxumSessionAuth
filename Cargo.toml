@@ -8,7 +8,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
@@ -57,7 +57,7 @@ serde = "1.0.188"
 #path = "D:/Sources/AxumSessions"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.4.0"
+version = "0.5.0"
 default-features = false
 
 [package.metadata.docs.rs]
