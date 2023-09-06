@@ -123,7 +123,7 @@ where
 {
     fn default() -> Self {
         Self {
-            /// Set to a 6 hour default in Database Session stores unloading.
+            // Set to a 6 hour default in Database Session stores unloading.
             cache: true,
             session_id: "user_auth_session_id".into(),
             max_age: Duration::hours(6),
