@@ -27,6 +27,7 @@ postgres-native = ["axum_session/postgres-native"]
 mysql-rustls = ["axum_session/mysql-rustls"]
 mysql-native = ["axum_session/mysql-native"]
 redis-db = ["axum_session/redis-db"]
+redis-clusterdb = ["axum_session/redis-clusterdb"]
 surrealdb-rocksdb =  ["axum_session/surrealdb-rocksdb"]
 surrealdb-tikv =  ["axum_session/surrealdb-tikv"]
 surrealdb-fdb-6_1 =  ["axum_session/surrealdb-fdb-6_1"]
@@ -36,6 +37,7 @@ surrealdb-fdb-7_0 =  ["axum_session/surrealdb-fdb-7_0"]
 surrealdb-fdb-7_1 =  ["axum_session/surrealdb-fdb-7_1"]
 surrealdb-mem =  ["axum_session/surrealdb-mem"]
 key-store = ["axum_session/key-store"]
+mongo = ["axum_session/mongo"]
 
 [dependencies]
 axum-core = "0.3.4"
@@ -54,10 +56,10 @@ tokio = { version = "1.32.0", features = ["full"] }
 serde = "1.0.188"
 
 [dependencies.axum_session]
-#path = "D:/Sources/AxumSessions"
+#path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.5.0"
+version = "0.6.0"
 default-features = false
 
 [package.metadata.docs.rs]
