@@ -127,7 +127,7 @@ where
             };
 
             // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
-            req.extensions_mut().insert(session.clone());
+            req.extensions_mut().insert(session);
 
             Ok(ready_inner.call(req).await?.map(body::boxed))
         })
