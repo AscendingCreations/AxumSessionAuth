@@ -1,4 +1,5 @@
 #![doc = include_str!("../README.md")]
+#![forbid(unsafe_code)]
 ///This Library Requires that DatabaseSessions is used as an active layer.
 ///
 mod auth;
