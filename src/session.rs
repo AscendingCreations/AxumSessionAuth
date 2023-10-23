@@ -1,11 +1,15 @@
-use crate::AuthCache;
+#[cfg(feature = "advanced")]
+use crate::AuthUser;
+use crate::{AuthCache, AuthConfig};
 use anyhow::Error;
 use async_trait::async_trait;
 use axum_core::extract::FromRequestParts;
 use axum_session::{DatabasePool, Session};
+#[cfg(feature = "advanced")]
+use chrono::Utc;
 use http::{self, request::Parts, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
-use std::{fmt, hash::Hash, marker::PhantomData};
+use std::{fmt, hash::Hash};
 
 /// AuthSession that is generated when a user is routed via Axum
 ///
@@ -23,7 +27,10 @@ where
     pub current_user: Option<User>,
     pub session: Session<Sess>,
     pub(crate) cache: AuthCache<User, Type, Pool>,
-    pub phantom: PhantomData<Pool>,
+    #[allow(dead_code)]
+    pub(crate) pool: Option<Pool>,
+    #[allow(dead_code)]
+    pub(crate) config: AuthConfig<Type>,
 }
 
 #[async_trait]
@@ -167,4 +174,102 @@ where
         self.session.remove("user_auth_session_id");
         self.session.renew();
     }
+
+    /// Used to check if a long living AuthSession is still logged in,
+    /// if the user logged out or if the user switched account id's during
+    /// the last request the AuthSession was created from. This does not check
+    /// if the session itself is not the same or reloaded.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.is_logged_in();
+    /// ```
+    ///
+    #[cfg(feature = "advanced")]
+    pub fn is_logged_in(&mut self) -> AuthStatus {
+        if let Some(id) = self.session.get::<Type>(&self.config.session_id) {
+            if id == self.id {
+                if self.cache.inner.contains_key(&self.id) {
+                    AuthStatus::LoggedIn
+                } else {
+                    AuthStatus::LoggedOut
+                }
+            } else {
+                AuthStatus::DifferentID
+            }
+        } else {
+            AuthStatus::LoggedOut
+        }
+    }
+
+    /// Reloads the user data into current user and cache.
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.reload_user().await;
+    /// ```
+    ///
+    #[cfg(feature = "advanced")]
+    pub async fn reload_user(&mut self) {
+        let current_user = User::load_user(self.id.clone(), self.pool.as_ref())
+            .await
+            .ok();
+
+        if self.config.cache {
+            let user = if let Some((_id, mut user)) = self.cache.inner.remove(&self.id) {
+                user.expires = Utc::now() + self.config.max_age;
+                user.current_user = current_user.clone();
+                user
+            } else {
+                AuthUser::<User, Type, Pool> {
+                    current_user: current_user.clone(),
+                    expires: Utc::now() + self.config.max_age,
+                    phantom_pool: Default::default(),
+                    phantom_type: Default::default(),
+                }
+            };
+
+            self.cache.inner.insert(self.id.clone(), user);
+        }
+
+        self.current_user = current_user;
+    }
+
+    /// Updates the users expiration time so a request will not
+    /// remove them from the cache.
+    ///
+    /// THIS WILL NOT RELOAD THE USERS DATA
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.update_user_expiration();
+    /// ```
+    ///
+    #[cfg(feature = "advanced")]
+    pub fn update_user_expiration(&mut self) {
+        if self.config.cache {
+            if let Some(mut user) = self.cache.inner.get_mut(&self.id) {
+                user.expires = Utc::now() + self.config.max_age;
+            }
+        }
+    }
+}
+
+/// Used to display how the users Auth data is compared to what
+/// a AuthSessions Data was set as. To ensure nothing changed.
+///
+/// # Examples
+/// ```rust no_run
+///  auth.is_logged_in();
+/// ```
+///
+#[cfg(feature = "advanced")]
+pub enum AuthStatus {
+    /// If the user id did not change and is logged in
+    LoggedIn,
+    /// If the users id did not match or got changed internally
+    /// by another request.
+    DifferentID,
+    /// the user is logged out.
+    LoggedOut,
 }

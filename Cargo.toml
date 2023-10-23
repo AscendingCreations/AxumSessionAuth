@@ -8,7 +8,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
@@ -39,6 +39,7 @@ surrealdb-mem =  ["axum_session/surrealdb-mem"]
 key-store = ["axum_session/key-store"]
 rest_mode = ["axum_session/rest_mode"]
 mongo = ["axum_session/mongo"]
+advanced = ["axum_session/advanced"]
 
 [dependencies]
 axum-core = "0.3.4"
@@ -60,9 +61,9 @@ serde = "1.0.188"
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.7.0"
+version = "0.8.0"
 default-features = false
 
 [package.metadata.docs.rs]
-features = ["sqlite-rustls","mysql-rustls","redis-db", "surrealdb-rocksdb", "surrealdb-mem"]
+features = ["sqlite-rustls","mysql-rustls","redis-db", "surrealdb-rocksdb", "surrealdb-mem", "advanced"]
 rustdoc-args = ["--document-private-items"]

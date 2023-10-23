@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+## Unreleased
+
+## 0.8.0 (23. October, 2023)
+### Changed
+- Updated axum_session to 0.8.0.
+
+### Added
+- Added `AuthStatus`, `AuthSession::is_logged_in()`, `AuthSession::reload_user` and `AuthSession::update_user_expiration`.
+- Features locked behind an advanced feature.
 
 ## 0.7.0 (4. October, 2023)
 ### Changed

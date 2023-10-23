@@ -81,7 +81,7 @@ where
 
             let id = axum_session
                 .get::<Type>(&config.session_id)
-                .map_or(config.anonymous_user_id, Some)
+                .map_or(config.anonymous_user_id.clone(), Some)
                 .unwrap_or_else(|| Type::default());
 
             let current_user = if id != Type::default() {
@@ -123,7 +123,8 @@ where
                 current_user,
                 cache,
                 session: axum_session,
-                phantom: PhantomData,
+                pool,
+                config,
             };
 
             // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
