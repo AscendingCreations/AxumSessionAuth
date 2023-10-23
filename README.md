@@ -32,11 +32,13 @@ If you need help with this library or have suggestions please go to our [Discord
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.7.0", features = [ "postgres-rustls" ] }
+axum_session_auth = { version = "0.8.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
 `default`: [`postgres-rustls`]
+
+`advanced`: Enable functions allowing more direct control over the sessions.
 
 `rest_mode`: Disables Cookie Handlering In place of Header only usage for Rest API Requests and Responses.
 
