@@ -15,7 +15,11 @@ pub use cache::AuthCache;
 pub use config::AuthConfig;
 pub use layer::AuthSessionLayer;
 pub use service::AuthSessionService;
-pub use session::{AuthSession, AuthStatus, Authentication};
+pub use session::{AuthSession, Authentication};
+
+#[cfg(feature = "advanced")]
+pub use session::AuthStatus;
+
 pub(crate) use user::AuthUser;
 
 pub use axum_session::databases::*;
