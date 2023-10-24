@@ -194,7 +194,7 @@ where
                 {
                     AuthStatus::LoggedIn
                 } else {
-                    AuthStatus::LoggedOut
+                    AuthStatus::StaleUser
                 }
             } else {
                 AuthStatus::DifferentID
@@ -255,6 +255,23 @@ where
             }
         }
     }
+
+    /// Updates the users id to what is currently in the session.
+    /// if the session doesnt exist or the id was removed it does nothing.
+    ///
+    /// THIS WILL NOT RELOAD THE USERS DATA
+    ///
+    /// # Examples
+    /// ```rust no_run
+    ///  auth.sync_user_id();
+    /// ```
+    ///
+    #[cfg(feature = "advanced")]
+    pub fn sync_user_id(&mut self) {
+        if let Some(id) = self.session.get::<Type>(&self.config.session_id) {
+            self.id = id.clone();
+        }
+    }
 }
 
 /// Used to display how the users Auth data is compared to what
@@ -274,4 +291,7 @@ pub enum AuthStatus {
     DifferentID,
     /// the user is logged out.
     LoggedOut,
+    /// The user account was removed from cache
+    /// so it needs reloading.
+    StaleUser,
 }
