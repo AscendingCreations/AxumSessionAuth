@@ -189,7 +189,9 @@ where
     pub fn is_logged_in(&mut self) -> AuthStatus {
         if let Some(id) = self.session.get::<Type>(&self.config.session_id) {
             if id == self.id {
-                if self.cache.inner.contains_key(&self.id) {
+                if (self.config.cache && self.cache.inner.contains_key(&self.id))
+                    || !self.config.cache
+                {
                     AuthStatus::LoggedIn
                 } else {
                     AuthStatus::LoggedOut
