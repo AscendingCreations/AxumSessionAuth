@@ -15,7 +15,7 @@ pub use cache::AuthCache;
 pub use config::AuthConfig;
 pub use layer::AuthSessionLayer;
 pub use service::AuthSessionService;
-pub use session::{AuthSession, Authentication};
+pub use session::{AuthSession, AuthStatus, Authentication};
 pub(crate) use user::AuthUser;
 
 pub use axum_session::databases::*;
