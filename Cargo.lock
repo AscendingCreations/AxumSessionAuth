@@ -356,35 +356,6 @@ dependencies = [
 
 [[package]]
 name = "axum_session"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "214df046e4759306dc748ba9ed42bd14a09d48f3671d18c3aa1d08b57a26c7fd"
-dependencies = [
- "aes-gcm",
- "async-trait",
- "axum-core",
- "base64 0.21.5",
- "bytes",
- "chrono",
- "cookie 0.17.0",
- "dashmap",
- "futures",
- "http",
- "http-body",
- "rand 0.8.5",
- "serde",
- "serde_json",
- "sqlx",
- "thiserror",
- "tokio",
- "tower-layer",
- "tower-service",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "axum_session"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "606cc66b6c8cb51751636c56d1a3ac326d58af5856d56f1ed4d5ae3a811fb2f1"
@@ -395,7 +366,7 @@ dependencies = [
  "base64 0.21.5",
  "bytes",
  "chrono",
- "cookie 0.18.0",
+ "cookie",
  "dashmap",
  "fastbloom-rs",
  "futures",
@@ -425,7 +396,7 @@ dependencies = [
  "async-recursion 1.0.5",
  "async-trait",
  "axum-core",
- "axum_session 0.9.0",
+ "axum_session",
  "bytes",
  "chrono",
  "dashmap",
@@ -878,21 +849,6 @@ name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
-
-[[package]]
-name = "cookie"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7efb37c3e1ccb1ff97164ad95ac1606e8ccd35b3fa0a7d99a304c7f4a428cc24"
-dependencies = [
- "aes-gcm",
- "base64 0.21.5",
- "percent-encoding",
- "rand 0.8.5",
- "subtle",
- "time",
- "version_check",
-]
 
 [[package]]
 name = "cookie"
@@ -2538,7 +2494,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
- "axum_session 0.8.0",
+ "axum_session",
  "axum_session_auth",
  "serde",
  "sqlx",
@@ -4122,7 +4078,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
- "axum_session 0.8.0",
+ "axum_session",
  "axum_session_auth",
  "serde",
  "sqlx",
