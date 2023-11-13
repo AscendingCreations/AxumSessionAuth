@@ -8,7 +8,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
