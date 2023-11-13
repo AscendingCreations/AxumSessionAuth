@@ -19,7 +19,7 @@ keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/AxumSessionAuth"
 
 [features]
-default = ["postgres-rustls"]
+default = ["postgres-rustls", "advanced"]
 sqlite-rustls = ["axum_session/sqlite-rustls"]
 sqlite-native = ["axum_session/sqlite-native"]
 postgres-rustls = ["axum_session/postgres-rustls"]
