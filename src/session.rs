@@ -137,7 +137,7 @@ where
     /// ```
     ///
     pub fn login_user(&self, id: Type) {
-        self.session.set("user_auth_session_id", id);
+        self.session.set(&self.config.session_id, id);
         self.session.renew();
     }
 
@@ -171,7 +171,7 @@ where
     /// ```
     ///
     pub fn logout_user(&self) {
-        self.session.remove("user_auth_session_id");
+        self.session.remove(&self.config.session_id);
         self.session.renew();
     }
 

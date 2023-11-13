@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## Unreleased
 
+## 0.9.0 (13. November, 2023)
+### Changed
+- Updated axum_session to 0.9.0.
+- Made AuthStatus Publically visiable
+
+### Added
+- sync_user_id function to Session.
+- StaleUser to AuthStatus Enum.
+
+### Fixed
+- Config session_id is no longer ignored for login and logout.
+
 ## 0.8.0 (23. October, 2023)
 ### Changed
 - Updated axum_session to 0.8.0.
