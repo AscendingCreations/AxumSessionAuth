@@ -5,7 +5,8 @@ use axum_session_auth::*;
 use serde::{Deserialize, Serialize};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool, SqlitePoolOptions};
 use std::sync::Arc;
-use std::{collections::HashSet, net::SocketAddr, str::FromStr};
+use std::{collections::HashSet, str::FromStr};
+use tokio::net::TcpListener;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
@@ -102,12 +103,8 @@ async fn main() {
         .layer(SessionLayer::new(session_store));
 
     // run it
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 
 async fn greet(auth: AuthSession<User, i64, SessionSqlitePool, NullPool>) -> String {

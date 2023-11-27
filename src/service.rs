@@ -1,7 +1,7 @@
 use crate::{AuthCache, AuthConfig, AuthSession, AuthUser, Authentication};
 use axum_core::{
-    body::{self, BoxBody},
-    response::Response,
+    body::Body,
+    response::{IntoResponse, Response},
     BoxError,
 };
 use axum_session::{DatabasePool, Session};
@@ -9,7 +9,7 @@ use bytes::Bytes;
 use chrono::Utc;
 use futures::future::BoxFuture;
 use http::{self, Request, StatusCode};
-use http_body::{Body as HttpBody, Full};
+use http_body::Body as HttpBody;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{
     boxed::Box,
@@ -53,7 +53,7 @@ where
     ResBody: HttpBody<Data = Bytes> + Send + 'static,
     ResBody::Error: Into<BoxError>,
 {
-    type Response = Response<BoxBody>;
+    type Response = Response<Body>;
     type Error = Infallible;
     type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
 
@@ -74,7 +74,7 @@ where
                 None => {
                     return Ok(Response::builder()
                         .status(StatusCode::UNAUTHORIZED)
-                        .body(body::boxed(Full::from("401 Unauthorized")))
+                        .body(Body::from("401 Unauthorized"))
                         .unwrap());
                 }
             };
@@ -130,7 +130,7 @@ where
             // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
             req.extensions_mut().insert(session);
 
-            Ok(ready_inner.call(req).await?.map(body::boxed))
+            Ok(ready_inner.call(req).await?.into_response())
         })
     }
 }

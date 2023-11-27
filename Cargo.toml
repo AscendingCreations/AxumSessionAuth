@@ -28,30 +28,23 @@ mysql-rustls = ["axum_session/mysql-rustls"]
 mysql-native = ["axum_session/mysql-native"]
 redis-db = ["axum_session/redis-db"]
 redis-clusterdb = ["axum_session/redis-clusterdb"]
-surrealdb-rocksdb =  ["axum_session/surrealdb-rocksdb"]
-surrealdb-tikv =  ["axum_session/surrealdb-tikv"]
-surrealdb-fdb-6_1 =  ["axum_session/surrealdb-fdb-6_1"]
-surrealdb-fdb-6_2 =  ["axum_session/surrealdb-fdb-6_2"]
-surrealdb-fdb-6_3 =  ["axum_session/surrealdb-fdb-6_3"]
-surrealdb-fdb-7_0 =  ["axum_session/surrealdb-fdb-7_0"]
-surrealdb-fdb-7_1 =  ["axum_session/surrealdb-fdb-7_1"]
-surrealdb-mem =  ["axum_session/surrealdb-mem"]
+surreal =  ["axum_session/surreal"]
 key-store = ["axum_session/key-store"]
 rest_mode = ["axum_session/rest_mode"]
 mongo = ["axum_session/mongo"]
 advanced = ["axum_session/advanced"]
 
 [dependencies]
-axum-core = "0.3.4"
+axum-core = "0.4.0"
 async-trait = "0.1.73"
 anyhow = "1.0.75"
 async-recursion = "1.0.5"
-http = "0.2.9"
+http = "1.0.0"
 tower-layer = "0.3.2"
 tower-service = "0.3.2"
 futures = "0.3.28"
-bytes = "1.4.0"
-http-body = "0.4.5"
+bytes = "1.5.0"
+http-body = "1.0.0"
 dashmap = "5.5.3"
 chrono = { version = "0.4.28", default-features = false, features = ["clock", "serde", "std"] }
 tokio = { version = "1.34.0", features = ["full"] }
@@ -61,7 +54,7 @@ serde = "1.0.192"
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.9.0"
+version = "0.10.0"
 default-features = false
 
 [package.metadata.docs.rs]
