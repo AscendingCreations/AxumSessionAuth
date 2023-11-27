@@ -32,7 +32,7 @@ If you need help with this library or have suggestions please go to our [Discord
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.8.0", features = [ "postgres-rustls" ] }
+axum_session_auth = { version = "0.10.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
@@ -60,13 +60,7 @@ axum_session_auth = { version = "0.8.0", features = [ "postgres-rustls" ] }
 
 `redis-clusterdb`:  `redis_pool 0.2.0` session support. Enabled Redis ClusterClient Pool.
 
-`surrealdb-rocksdb`: `1.0.0` support for rocksdb.
-
-`surrealdb-tikv` : `1.0.0` support for tikv.
-
-`surrealdb-fdb-?_?` : `1.0.0` support for fdb versions 6_1, 6_2, 6_3, 7_0, 7_1. Replace ?_? with version.
-
-`surrealdb-mem` : `1.0.0` support for mem.
+`surreal`: `1.0.0` support for surrealdb.
 
 `mongo` : `mongodb 2.6.1` support for mongo.
 
