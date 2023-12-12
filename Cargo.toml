@@ -4,6 +4,7 @@ members = [
     ".",
     "examples/sqlx-example/",
     "examples/NoPoolType/",
+    "examples/surrealdb/",
 ]
 
 [package]
