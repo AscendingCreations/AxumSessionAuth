@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## Unreleased
+
+## 0.10.1 (12. December, 2023)
+### Fixed
+- Documents not building.
+
+## 0.10.0 (27. November, 2023)
 ### Changed
 - (Breaking) Updated to axum_session 0.10.0
 - (Breaking) Updated to axum 0.7
