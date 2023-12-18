@@ -59,5 +59,5 @@ version = "0.10.0"
 default-features = false
 
 [package.metadata.docs.rs]
-features = ["sqlite-rustls","mysql-rustls","redis-db", "surrealdb-rocksdb", "surrealdb-mem", "advanced"]
+features = ["sqlite-rustls","mysql-rustls","redis-db", "surreal", "advanced"]
 rustdoc-args = ["--document-private-items"]
