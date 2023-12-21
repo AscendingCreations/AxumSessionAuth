@@ -339,9 +339,9 @@ dependencies = [
 
 [[package]]
 name = "axum_session"
-version = "0.10.0"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c44d214bc68dd38b2af9b3b5a2a48f9e1e1853222747e3c6ee825f79aac6bc5a"
+checksum = "f7a7a22663b407aeb40fb1e1833c838e021a9465735b5c646614dfe8475aab7b"
 dependencies = [
  "aes-gcm",
  "async-trait",
@@ -373,7 +373,7 @@ dependencies = [
 
 [[package]]
 name = "axum_session_auth"
-version = "0.10.1"
+version = "0.11.0"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -2978,9 +2978,9 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.23.3"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f49cdc0bb3f412bf8e7d1bd90fe1d9eb10bc5c399ba90973c14662a27b3f8ba"
+checksum = "c580d9cbbe1d1b479e8d67cf9daf6a62c957e6846048408b80b43ac3f6af84cd"
 dependencies = [
  "async-trait",
  "bytes",
@@ -3003,9 +3003,9 @@ dependencies = [
 
 [[package]]
 name = "redis_pool"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "455335828d9b3827b7ae9c5f87129ec574ad1023361cd92721254924d9236f50"
+checksum = "0c6e30cbaef59b7d0373ac0d5cb022e17099b109a695cf83958677caac608035"
 dependencies = [
  "async-trait",
  "crossbeam-queue",
