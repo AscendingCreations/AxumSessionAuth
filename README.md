@@ -60,9 +60,9 @@ axum_session_auth = { version = "0.12.0", features = [ "postgres-rustls" ] }
 
 `redis-clusterdb`:  `redis_pool` session support. Enabled Redis ClusterClient Pool.
 
-`surreal`: `1.0.0` support for surrealdb.
+`surreal`: support for surrealdb.
 
-`mongo` : `mongodb 2.6.1` support for mongo.
+`mongo` : `mongodb` support for mongo.
 
 # Example
 
