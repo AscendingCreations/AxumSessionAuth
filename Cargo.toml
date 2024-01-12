@@ -9,7 +9,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.11.0"
+version = "0.12.0"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
@@ -20,7 +20,7 @@ keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/AxumSessionAuth"
 
 [features]
-default = ["postgres-rustls", "advanced"]
+default = ["postgres-rustls"]
 sqlite-rustls = ["axum_session/sqlite-rustls"]
 sqlite-native = ["axum_session/sqlite-native"]
 postgres-rustls = ["axum_session/postgres-rustls"]
@@ -50,12 +50,13 @@ dashmap = "5.5.3"
 chrono = { version = "0.4.28", default-features = false, features = ["clock", "serde", "std"] }
 tokio = { version = "1.34.0", features = ["full"] }
 serde = "1.0.192"
+tracing = "0.1.40"
 
 [dependencies.axum_session]
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.11.0"
+version = "0.12.1"
 default-features = false
 
 [package.metadata.docs.rs]

@@ -1,14 +1,10 @@
 use crate::{AuthCache, AuthConfig, AuthSession, AuthUser, Authentication};
-use axum_core::{
-    body::Body,
-    response::{IntoResponse, Response},
-    BoxError,
-};
+use axum_core::BoxError;
 use axum_session::{DatabasePool, Session};
 use bytes::Bytes;
 use chrono::Utc;
 use futures::future::BoxFuture;
-use http::{self, Request, StatusCode};
+use http::{self, Request, Response};
 use http_body::Body as HttpBody;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{
@@ -40,7 +36,16 @@ impl<S, User, Type, Sess, Pool, ReqBody, ResBody> Service<Request<ReqBody>>
     for AuthSessionService<S, User, Type, Sess, Pool>
 where
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
-    Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
+    Type: Eq
+        + Default
+        + Clone
+        + Send
+        + Sync
+        + Hash
+        + Serialize
+        + DeserializeOwned
+        + std::fmt::Display
+        + 'static,
     Sess: DatabasePool + Clone + fmt::Debug + Sync + Send + 'static,
     User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,
     S: Service<Request<ReqBody>, Response = Response<ResBody>, Error = Infallible>
@@ -50,10 +55,10 @@ where
     S::Future: Send + 'static,
     ReqBody: Send + 'static,
     Infallible: From<<S as Service<Request<ReqBody>>>::Error>,
-    ResBody: HttpBody<Data = Bytes> + Send + 'static,
+    ResBody: HttpBody<Data = Bytes> + Default + Send + 'static,
     ResBody::Error: Into<BoxError>,
 {
-    type Response = Response<Body>;
+    type Response = Response<ResBody>;
     type Error = Infallible;
     type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
 
@@ -72,10 +77,10 @@ where
             let axum_session = match req.extensions().get::<Session<Sess>>().cloned() {
                 Some(session) => session,
                 None => {
-                    return Ok(Response::builder()
-                        .status(StatusCode::UNAUTHORIZED)
-                        .body(Body::from("401 Unauthorized"))
-                        .unwrap());
+                    tracing::error!("axum session extension is not loaded.");
+                    let mut res = Response::default();
+                    *res.status_mut() = http::StatusCode::INTERNAL_SERVER_ERROR;
+                    return Ok(res);
                 }
             };
 
@@ -87,9 +92,11 @@ where
             let current_user = if id != Type::default() {
                 if config.cache {
                     if let Some(mut user) = cache.inner.get_mut(&id) {
+                        tracing::warn!("user id: {} found in cache", id);
                         user.expires = Utc::now() + config.max_age;
                         user.current_user.clone()
                     } else {
+                        tracing::warn!("loading user id: {} from load_user", id);
                         let current_user = User::load_user(id.clone(), pool.as_ref()).await.ok();
                         let user = AuthUser::<User, Type, Pool> {
                             current_user: current_user.clone(),
@@ -113,6 +120,7 @@ where
                 let last_sweep = { *cache.last_expiry_sweep.read().await };
 
                 if last_sweep <= Utc::now() {
+                    tracing::info!("clearing old users from user cache.");
                     cache.inner.retain(|_k, v| v.expires > Utc::now());
                     *cache.last_expiry_sweep.write().await = Utc::now() + config.max_age;
                 }
@@ -129,8 +137,7 @@ where
 
             // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
             req.extensions_mut().insert(session);
-
-            Ok(ready_inner.call(req).await?.into_response())
+            Ok(ready_inner.call(req).await?)
         })
     }
 }
