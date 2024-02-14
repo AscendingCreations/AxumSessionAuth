@@ -10,10 +10,13 @@ use tower_layer::Layer;
 #[derive(Clone, Debug)]
 pub struct AuthSessionLayer<User, Type, Sess, Pool>
 where
+    User: Authentication<User, Type, Pool> + Clone + Send,
+    Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
     pub(crate) pool: Option<Pool>,
     pub(crate) config: AuthConfig<Type>,
+    pub(crate) cache: AuthCache<User, Type, Pool>,
     pub phantom_user: PhantomData<User>,
     pub phantom_session: PhantomData<Sess>,
     pub phantom_type: PhantomData<Type>,
@@ -39,6 +42,7 @@ where
         Self {
             pool,
             config: AuthConfig::default(),
+            cache: AuthCache::<User, Type, Pool>::new(Utc::now() + Duration::hours(1)),
             phantom_user: PhantomData,
             phantom_session: PhantomData,
             phantom_type: PhantomData,
@@ -65,7 +69,7 @@ where
         AuthSessionService {
             pool: self.pool.clone(),
             config: self.config.clone(),
-            cache: AuthCache::<User, Type, Pool>::new(Utc::now() + Duration::hours(1)),
+            cache: self.cache.clone(),
             inner,
             phantom_session: PhantomData,
         }
