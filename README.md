@@ -70,7 +70,7 @@ axum_session_auth = { version = "0.12.1", features = [ "postgres-rustls" ] }
 use sqlx::{PgPool, ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
 use axum_session::{SessionPgPool, Session, SessionConfig, SessionLayer, DatabasePool};
-use axum_session_auth::{AuthSession, AuthSessionLayer, Authentication, AuthConfig};
+use axum_session_auth::{AuthSession, AuthSessionLayer, Authentication, AuthConfig, HasPermission};
 use axum::{
     Router,
     routing::get,
