@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## Unreleased
 
+## 0.13.0 (11. March, 2024)
+### Changed
+- (Breaking) Updated to Axum Session 0.13.0
+
 ## 0.12.1 (14. February, 2024)
 ### Fixed
 - Multiple Cache Existing due to Service fn getting called per async thread. In older versions please Disable cache unless you upgrade to this version.

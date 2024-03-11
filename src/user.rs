@@ -1,12 +1,7 @@
 use crate::Authentication;
 use chrono::{DateTime, Utc};
 use serde::{de::DeserializeOwned, Serialize};
-use std::{
-    default::Default,
-    fmt,
-    hash::Hash,
-    marker::{PhantomData, Send, Sync},
-};
+use std::{fmt, hash::Hash, marker::PhantomData};
 
 /// AuthSession that is generated when a user is routed via Axum
 ///

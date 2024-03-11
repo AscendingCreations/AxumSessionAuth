@@ -32,7 +32,7 @@ If you need help with this library or have suggestions please go to our [Discord
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.12.1", features = [ "postgres-rustls" ] }
+axum_session_auth = { version = "0.13.0", features = [ "postgres-rustls" ] }
 ```
 
 #### Cargo Feature Flags
@@ -56,9 +56,9 @@ axum_session_auth = { version = "0.12.1", features = [ "postgres-rustls" ] }
 
 `mysql-native`: `Sqlx` support for the MySQL/MariaDB database server and `native-tls`.
 
-`redis-db`:  `redis_pool` session support. Enables Redis Client Pool
+`redis-db`:  `redis_pool` session support. Enables Redis Client Pool. "Uses Redis 0.24.0 currently"
 
-`redis-clusterdb`:  `redis_pool` session support. Enabled Redis ClusterClient Pool.
+`redis-clusterdb`:  `redis_pool` session support. Enabled Redis ClusterClient Pool. "Uses Redis 0.24.0 currently"
 
 `surreal`: support for surrealdb.
 

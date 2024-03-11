@@ -2,12 +2,7 @@ use crate::{AuthUser, Authentication};
 use chrono::{DateTime, Utc};
 use dashmap::DashMap;
 use serde::{de::DeserializeOwned, Serialize};
-use std::{
-    fmt,
-    hash::Hash,
-    marker::{PhantomData, Send, Sync},
-    sync::Arc,
-};
+use std::{fmt, hash::Hash, marker::PhantomData, sync::Arc};
 use tokio::sync::RwLock;
 
 #[derive(Clone)]

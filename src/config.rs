@@ -126,7 +126,7 @@ where
             // Set to a 6 hour default in Database Session stores unloading.
             cache: true,
             session_id: "user_auth_session_id".into(),
-            max_age: Duration::hours(6),
+            max_age: Duration::try_hours(6).unwrap_or_default(),
             anonymous_user_id: None,
         }
     }

@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use axum::{http::Method, routing::get, Router};
-use axum_session::{SessionConfig, SessionLayer, SessionSqlitePool, SessionStore};
+use axum_session::{SessionConfig, SessionLayer, SessionStore};
 use axum_session_auth::*;
 use serde::{Deserialize, Serialize};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool, SqlitePoolOptions};

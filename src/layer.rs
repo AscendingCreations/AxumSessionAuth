@@ -42,7 +42,9 @@ where
         Self {
             pool,
             config: AuthConfig::default(),
-            cache: AuthCache::<User, Type, Pool>::new(Utc::now() + Duration::hours(1)),
+            cache: AuthCache::<User, Type, Pool>::new(
+                Utc::now() + Duration::try_hours(1).unwrap_or_default(),
+            ),
             phantom_user: PhantomData,
             phantom_session: PhantomData,
             phantom_type: PhantomData,

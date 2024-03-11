@@ -7,7 +7,7 @@ use axum_core::extract::FromRequestParts;
 use axum_session::{DatabasePool, Session};
 #[cfg(feature = "advanced")]
 use chrono::Utc;
-use http::{self, request::Parts, StatusCode};
+use http::{request::Parts, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash};
 

@@ -4,11 +4,10 @@ use axum_session::{DatabasePool, Session};
 use bytes::Bytes;
 use chrono::Utc;
 use futures::future::BoxFuture;
-use http::{self, Request, Response};
+use http::{Request, Response};
 use http_body::Body as HttpBody;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{
-    boxed::Box,
     convert::Infallible,
     fmt,
     hash::Hash,
@@ -137,7 +136,7 @@ where
 
             // Sets a clone of the Store in the Extensions for Direct usage and sets the Session for Direct usage
             req.extensions_mut().insert(session);
-            Ok(ready_inner.call(req).await?)
+            ready_inner.call(req).await
         })
     }
 }
