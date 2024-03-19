@@ -40,7 +40,7 @@ axum_session_auth = { version = "0.13.0", features = [ "postgres-rustls" ] }
 
 `advanced`: Enable functions allowing more direct control over the sessions.
 
-`rest_mode`: Disables Cookie Handlering In place of Header only usage for Rest API Requests and Responses.
+`rest_mode`: Disables Cookie Handling In place of Header only usage for Rest API Requests and Responses.
 
 `key-store`: Enabled the optional key storage. Will increase ram usage based on Fastbloom settings.
 
@@ -79,81 +79,80 @@ use axum::{
 #[tokio::main]
 async fn main() {
     # async {
-    let poll = connect_to_database().await.unwrap();
+        let poll = connect_to_database().await.unwrap();
 
-    let session_config = SessionConfig::default()
-        .with_database("test")
-        .with_table_name("test_table");
-    let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
-    let session_store = SessionStore::<SessionPgPool>::new(Some(poll.clone().into()), session_config);
+        let session_config = SessionConfig::default()
+            .with_database("test")
+            .with_table_name("test_table");
+        let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
+        let session_store = SessionStore::<SessionPgPool>::new(Some(poll.clone().into()), session_config);
 
-    // Build our application with some routes
-    let app = Router::new()
-        .route("/greet/:name", get(greet))
-        .layer(SessionLayer::new(session_store))
-        .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(poll)).with_config(auth_config));
+        // Build our application with some routes
+        let app = Router::new()
+            .route("/greet/:name", get(greet))
+            .layer(SessionLayer::new(session_store))
+            .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(poll)).with_config(auth_config));
 
-    // Run it
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    tracing::debug!("listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
-    # };
+        // Run it
+        let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+        tracing::debug!("listening on {}", addr);
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .await
+            .unwrap();
+        # };
 }
 
-// We can get the Method to compare with what Methods we allow. Useful if this supports multiple methods.
-// When called auth is loaded in the background for you.
+// We can obtain the method to compare with the methods we allow, which is useful if this supports multiple methods.
+// When called, auth is loaded in the background for you.
 async fn greet(method: Method, auth: AuthSession<User, i64, SessionPgPool, PgPool>) -> &'static str {
     let mut count: usize = auth.session.get("count").unwrap_or(0);
-    
-    // We will get the user if not then a guest which should be our default.
+
+    // We will get the user if not, then a guest which should be our default.
     let current_user = auth.current_user.clone().unwrap_or_default();
     count += 1;
 
-    // Session is Also included with Auth so no need to require it in the function arguments if your using
-    // AuthSession.
+    // Session is also included with Auth so there's no need to require it in the function arguments if you're using AuthSession.
     auth.session.set("count", count);
 
-    // If for some reason you needed to update your Users Permissions 
-    // or data that is cached then you will want to clear the user cache if it is enabled.
-    // The user Cache is enabled by default. To clear simply use.
+    // If, for some reason, you needed to update your user's permissions
+    // or data that is cached, then you will want to clear the user cache if it is enabled.
+    // The user Cache is enabled by default. To clear, simply use:
     auth.cache_clear_user(1).await;
-    // To clear all cached user data for a large update
+    // To clear all cached user data for a large update:
     auth.cache_clear_all().await;
 
-    // This is our Auth Permission Builder and Rights Checker. We Build it with the Methods to check for
-    // So in this case Method::Get. If they loaded the page with Method::Post it will fail with the no Permissions! error.
-    // the false is build it to deturmine is Authentication is Required or not. this runs is_authenticated() when true. 
+    // This is our Auth Permission Builder and Rights Checker. We build it with methods to check for permissions.
+    // In this case, if the page is loaded using Method::Get, it will proceed successfully. However, if Method::Post is used, it will fail with the "no Permissions!" error.
+    // The boolean value "false" is used to determine whether authentication is required. When set to true, it triggers the function is_authenticated().
     if !Auth::<User, i64, PgPool>::build([Method::Get], false)
-        // We Prepare what Rights we accept or Deny from Guest or Other users.
+        // We prepare which rights we accept or deny from guests or other users.
         .requires(Rights::none([
             Rights::permission("Token::UseAdmin"),
             Rights::permission("Token::ModifyPerms"),
         ]))
-        // We then Validate the Current user, and Method. We also pass our Database along for database permissions checking
-        // if required otherwise None.
+        // We then validate the current user and method. We also pass our database along for database permissions checking if required; otherwise, None.
         .validate(&current_user, &method, None)
         .await
     {
-        // We return No Permissions message if validate fails for any reason.
+        // We return a "No Permissions" message if validation fails for any reason.
         return format!("No Permissions! for {}", current_user.username)[];
     }
 
-    // Since we had the is_authenticated set to false Above we will instead use it to login our Guest user. 
+    // Since we had the is_authenticated set to false Above we will instead use it to log in our Guest user.
     if !auth.is_authenticated() {
         // Set the user ID of the User to the Session so it can be Auto Loaded the next load or redirect
         auth.login_user(2);
         // Set the session to be long term. Good for Remember me type instances.
         auth.remember_user(true);
-        // We dont currently know the username until the next page access.
-        // so Normally we would Redirect here after login if we did indeed login.
-        // But in this case we will just use a let the user know to reload the page for the example.
-        "You have Logged in! Please Refreash the page to display the username and counter."
+        // We don't currently know the username until the next page access.
+        // so Normally we would Redirect here after login if we did indeed log in.
+        // But in this case we will just let the user know to reload the page for the example.
+        "You have Logged in! Please Refresh the page to display the username and counter."
     } else {
-        // On Page Reload if the user has all the permissions and the Method is correct and they are logged in
-        // It will display their username and a count that increments with each page refreash.
+
+        // Upon page reload, if the user possesses all necessary permissions, the method is accurate, and they are logged in,
+        // their username and a count that increments with each page refresh will be displayed.
         format!("{}-{}", current_user.username, count)[..]
     };
 }
@@ -179,7 +178,7 @@ impl HasPermission<PgPool> for User {
 
 #[async_trait]
 impl Authentication<User, i64, PgPool> for User {
-    // This is ran when the user has logged in and has not yet been Cached in the system.
+    // This is run when the user has logged in and has not yet been Cached in the system.
     // Once ran it will load and cache the user.
     async fn load_user(userid: i64, _pool: Option<&PgPool>) -> Result<User> {
         Ok(User {
@@ -189,7 +188,7 @@ impl Authentication<User, i64, PgPool> for User {
         })
     }
 
-    // This function is used internally to deturmine if they are logged in or not.
+    // This function is used internally to determine if they are logged in or not.
     fn is_authenticated(&self) -> bool {
         !self.anonymous
     }
