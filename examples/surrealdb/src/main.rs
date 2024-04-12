@@ -2,15 +2,15 @@ use async_trait::async_trait;
 use axum::{http::Method, routing::get, Router};
 use axum_session::{SessionConfig, SessionLayer, SessionStore};
 use axum_session_auth::*;
+use axum_session_surreal::SessionSurrealPool;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use tokio::net::TcpListener;
-
 use surrealdb::{
     engine::any::{connect, Any},
     opt::auth::Root,
     Surreal,
 };
+use tokio::net::TcpListener;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {

@@ -20,19 +20,8 @@ keywords = ["Axum", "Tower", "SQLx", "Session", "Authentication"]
 repository = "https://github.com/AscendingCreations/AxumSessionAuth"
 
 [features]
-default = ["postgres-rustls"]
-sqlite-rustls = ["axum_session/sqlite-rustls"]
-sqlite-native = ["axum_session/sqlite-native"]
-postgres-rustls = ["axum_session/postgres-rustls"]
-postgres-native = ["axum_session/postgres-native"]
-mysql-rustls = ["axum_session/mysql-rustls"]
-mysql-native = ["axum_session/mysql-native"]
-redis-db = ["axum_session/redis-db"]
-redis-clusterdb = ["axum_session/redis-clusterdb"]
-surreal =  ["axum_session/surreal"]
 key-store = ["axum_session/key-store"]
 rest_mode = ["axum_session/rest_mode"]
-mongo = ["axum_session/mongo"]
 advanced = ["axum_session/advanced"]
 
 [dependencies]
@@ -56,9 +45,8 @@ tracing = "0.1.40"
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.13.0"
-default-features = false
+version = "0.14.0"
 
 [package.metadata.docs.rs]
-features = ["sqlite-rustls","mysql-rustls","redis-db", "surreal", "advanced"]
+features = ["advanced"]
 rustdoc-args = ["--document-private-items"]

@@ -23,54 +23,41 @@ If you need help with this library or have suggestions please go to our [Discord
  Sessions Authentication uses [`tokio`] runtime and ['axum_session'];
 
 [`tokio`]: https://github.com/tokio-rs/tokio
-[`native-tls`]: https://crates.io/crates/native-tls
-[`rustls`]: https://crates.io/crates/rustls
-[`sqlx`]: https://crates.io/crates/sqlx
 [`axum_session`]: https://crates.io/crates/axum_session
 
 ```toml
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.13.0", features = [ "postgres-rustls" ] }
+axum_session_auth = { version = "0.14.0" }
+axum_session_sqlx = { version = "0.1.0" }
 ```
 
 #### Cargo Feature Flags
-`default`: [`postgres-rustls`]
 
-`advanced`: Enable functions allowing more direct control over the sessions.
+| Features                      | Description                                                                                    |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `advanced`                    | Enable functions allowing more direct control over the sessions.                               |
+| `rest_mode`                   | Disables Cookie Handlering In place of Header only usage for Rest API Requests and Responses.  |
+| `key-store`                   | Enabled the optional key storage. Will increase ram usage based on Fastbloom settings.         |
 
-`rest_mode`: Disables Cookie Handling In place of Header only usage for Rest API Requests and Responses.
 
-`key-store`: Enabled the optional key storage. Will increase ram usage based on Fastbloom settings.
+| Database Crate                                                                      | Persistent | Description                                                 |
+| ----------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------- |
+| [`axum_session_sqlx`](https://crates.io/crates/axum_session_sqlx)                   | Yes        | Sqlx session store                                          |
+| [`axum_session_surreal`](https://crates.io/crates/axum_session_surreal)             | Yes        | Surreal session store                                       |
+| [`axum_session_mongo`](https://crates.io/crates/axum_session_mongo)                 | Yes        | Mongo session store                                         |
+| [`axum_session_redispool`](https://crates.io/crates/axum_session_redisspool)        | Yes        | RedisPool session store                                     |
 
-`sqlite-rustls`: `Sqlx` support for the self-contained [SQLite](https://sqlite.org/) database engine and `rustls`.
-
-`sqlite-native`: `Sqlx` support for the self-contained [SQLite](https://sqlite.org/) database engine and `native-tls`.
-
-`postgres-rustls`: `Sqlx` support for the Postgres database server and `rustls`.
-
-`postgres-native`: `Sqlx` support for the Postgres database server and `native-tls`.
-
-`mysql-rustls`: `Sqlx` support for the MySQL/MariaDB database server and `rustls`.
-
-`mysql-native`: `Sqlx` support for the MySQL/MariaDB database server and `native-tls`.
-
-`redis-db`:  `redis_pool` session support. Enables Redis Client Pool. "Uses Redis 0.24.0 currently"
-
-`redis-clusterdb`:  `redis_pool` session support. Enabled Redis ClusterClient Pool. "Uses Redis 0.24.0 currently"
-
-`surreal`: support for surrealdb.
-
-`mongo` : `mongodb` support for mongo.
 
 # Example
 
 ```rust
 use sqlx::{PgPool, ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
-use axum_session::{SessionPgPool, Session, SessionConfig, SessionLayer, DatabasePool};
+use axum_session::{Session, SessionConfig, SessionLayer, DatabasePool};
 use axum_session_auth::{AuthSession, AuthSessionLayer, Authentication, AuthConfig, HasPermission};
+use axum_session_sqlx::SessionPgPool;
 use axum::{
     Router,
     routing::get,
