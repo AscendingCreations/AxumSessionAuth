@@ -91,11 +91,11 @@ where
             let current_user = if id != Type::default() {
                 if config.cache {
                     if let Some(mut user) = cache.inner.get_mut(&id) {
-                        tracing::warn!("user id: {} found in cache", id);
+                        tracing::debug!("user id: {} found in cache", id);
                         user.expires = Utc::now() + config.max_age;
                         user.current_user.clone()
                     } else {
-                        tracing::warn!("loading user id: {} from load_user", id);
+                        tracing::debug!("loading user id: {} from load_user", id);
                         let current_user = User::load_user(id.clone(), pool.as_ref()).await.ok();
                         let user = AuthUser::<User, Type, Pool> {
                             current_user: current_user.clone(),
