@@ -9,7 +9,7 @@ members = [
 
 [package]
 name = "axum_session_auth"
-version = "0.14.0"
+version = "0.14.1"
 authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 description = "Library to Provide a User Authentication and privilege Token Checks. It requires the Axum_Session library."
 edition = "2021"
@@ -26,26 +26,26 @@ advanced = ["axum_session/advanced"]
 
 [dependencies]
 axum-core = "0.4.3"
-async-trait = "0.1.77"
-anyhow = "1.0.80"
-async-recursion = "1.0.5"
-http = "1.0.0"
-tower-layer = "0.3.2"
-tower-service = "0.3.2"
+async-trait = "0.1.82"
+anyhow = "1.0.86"
+async-recursion = "1.1.1"
+http = "1.1.0"
+tower-layer = "0.3.3"
+tower-service = "0.3.3"
 futures = "0.3.30"
-bytes = "1.5.0"
-http-body = "1.0.0"
-dashmap = "5.5.3"
-chrono = { version = "0.4.34", default-features = false, features = ["clock", "serde", "std"] }
-tokio = { version = "1.36.0", features = ["full"] }
-serde = "1.0.197"
+bytes = "1.7.1"
+http-body = "1.0.1"
+dashmap = "6.1.0"
+chrono = { version = "0.4.38", default-features = false, features = ["clock", "serde", "std"] }
+tokio = { version = "1.40.0", features = ["full"] }
+serde = "1.0.209"
 tracing = "0.1.40"
 
 [dependencies.axum_session]
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.14.0"
+version = "0.14.2"
 
 [package.metadata.docs.rs]
 features = ["advanced"]

@@ -89,6 +89,7 @@ async fn main() {
             .await
             .unwrap();
 
+    // We create are NullPool here just for Sessions Auth.
     let nullpool = Arc::new(Option::None);
 
     // build our application with some routes
