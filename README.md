@@ -30,7 +30,7 @@ If you need help with this library or have suggestions please go to our [Discord
 [dependencies]
 # Postgres + rustls
 axum_session_auth = { version = "0.14.0" }
-axum_session_sqlx = { version = "0.1.0" }
+axum_session_sqlx = { version = "0.3.0" }
 ```
 
 #### Cargo Feature Flags
