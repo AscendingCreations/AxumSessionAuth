@@ -102,7 +102,7 @@ impl Rights {
                 }
 
                 all
-            },
+            }
             Self::Permission(perm) => user.has(perm, db).await,
             Self::None => false,
         }
