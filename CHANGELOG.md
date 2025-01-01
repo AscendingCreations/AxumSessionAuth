@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## Unreleased
 
+## 0.15.0 (1. Janurary, 2025)
+### Changed
+- (Breaking)  Axum 0.8.1 and axum_session 0.15"
+
 ## 0.14.1 (6. September, 2024)
 ### Changed
 - cache hit/miss traces from warn level to debug level @jhoobergs
