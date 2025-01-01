@@ -25,19 +25,19 @@ rest_mode = ["axum_session/rest_mode"]
 advanced = ["axum_session/advanced"]
 
 [dependencies]
-axum-core = "0.4.3"
-async-trait = "0.1.82"
-anyhow = "1.0.86"
+axum-core = "0.5.0"
+async-trait = "0.1.83"
+anyhow = "1.0.95"
 async-recursion = "1.1.1"
-http = "1.1.0"
+http = "1.2.0"
 tower-layer = "0.3.3"
 tower-service = "0.3.3"
-futures = "0.3.30"
-bytes = "1.7.1"
+futures = "0.3.31"
+bytes = "1.9.0"
 http-body = "1.0.1"
 dashmap = "6.1.0"
 chrono = { version = "0.4.38", default-features = false, features = ["clock", "serde", "std"] }
-tokio = { version = "1.40.0", features = ["full"] }
+tokio = { version = "1.42.0", features = ["full"] }
 serde = "1.0.209"
 tracing = "0.1.40"
 
@@ -45,7 +45,7 @@ tracing = "0.1.40"
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.14.2"
+version = "0.15.0"
 
 [package.metadata.docs.rs]
 features = ["advanced"]

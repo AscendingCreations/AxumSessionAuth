@@ -46,7 +46,6 @@ where
     fn is_anonymous(&self) -> bool;
 }
 
-#[async_trait]
 impl<S, User, Type, Sess, Pool> FromRequestParts<S> for AuthSession<User, Type, Sess, Pool>
 where
     User: Authentication<User, Type, Pool> + Clone + Send + Sync + 'static,

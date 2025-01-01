@@ -5,7 +5,7 @@ authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-axum = {version = "0.7.1"}
+axum = {version = "0.8.1"}
 tokio = { version = "1.40.0", features = ["full", "tracing"] }
 async-trait = "0.1.71"
 sqlx = { version = "0.8.1", features = [
@@ -19,10 +19,10 @@ sqlx = { version = "0.8.1", features = [
 ] }
 anyhow = "1.0.71"
 serde = "1.0.167"
-axum_session_sqlx = {version = "0.3.0", features = ["sqlite"]}
+axum_session_sqlx = {version = "0.4.0", features = ["sqlite"]}
 
 [dependencies.axum_session]
-version = "0.14.2"
+version = "0.15.0"
 
 [dependencies.axum_session_auth]
 path = "../../"
