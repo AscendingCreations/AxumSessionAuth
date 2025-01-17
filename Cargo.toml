@@ -45,7 +45,7 @@ tracing = "0.1.40"
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.15.0"
+version = "0.16.0"
 
 [package.metadata.docs.rs]
 features = ["advanced"]
