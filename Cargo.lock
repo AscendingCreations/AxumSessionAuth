@@ -435,37 +435,6 @@ dependencies = [
 
 [[package]]
 name = "axum_session"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bcd5d9395b53d6a7054f599f4fe6f519d374a5b84fa758d1163af0d278b9213"
-dependencies = [
- "aes-gcm",
- "async-trait",
- "axum",
- "base64 0.22.1",
- "bytes",
- "chrono",
- "cookie",
- "dashmap 6.1.0",
- "forwarded-header-value",
- "futures",
- "hmac",
- "http",
- "http-body",
- "rand 0.8.5",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.9",
- "tokio",
- "tower-layer",
- "tower-service",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "axum_session"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9cbd59ac11f92412bd86308ce6c9d579e4a6ab627a2c7074afa5e4ef7144900d"
@@ -504,7 +473,7 @@ dependencies = [
  "async-recursion",
  "async-trait",
  "axum-core",
- "axum_session 0.16.0",
+ "axum_session",
  "bytes",
  "chrono",
  "dashmap 6.1.0",
@@ -520,24 +489,24 @@ dependencies = [
 
 [[package]]
 name = "axum_session_sqlx"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "afa39f1780a863957b1bb162569522cc92f0588dd11b2b914a67b6e647058e28"
+checksum = "adf2123bc5cda89260f64744043e46e064213a7840b204acb611ad8268f131a7"
 dependencies = [
  "async-trait",
- "axum_session 0.15.0",
+ "axum_session",
  "chrono",
  "sqlx",
 ]
 
 [[package]]
 name = "axum_session_surreal"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "893174b2caf867f063f9c72ac667b634ffd308d8a414858c0317b8e49e2179fe"
+checksum = "6e438a543bd3ebc957fd6c4fbad0b00b481e6477e88a9ea349e7584e65656b58"
 dependencies = [
  "async-trait",
- "axum_session 0.15.0",
+ "axum_session",
  "chrono",
  "surrealdb",
 ]
@@ -2534,7 +2503,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
- "axum_session 0.15.0",
+ "axum_session",
  "axum_session_auth",
  "axum_session_sqlx",
  "serde",
@@ -3992,7 +3961,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
- "axum_session 0.15.0",
+ "axum_session",
  "axum_session_auth",
  "axum_session_sqlx",
  "serde",
@@ -4274,7 +4243,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
- "axum_session 0.15.0",
+ "axum_session",
  "axum_session_auth",
  "axum_session_surreal",
  "serde",
