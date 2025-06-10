@@ -66,19 +66,19 @@ use axum::{
 #[tokio::main]
 async fn main() {
     # async {
-        let poll = connect_to_database().await.unwrap();
+        let pool = connect_to_database().await.unwrap();
 
         let session_config = SessionConfig::default()
             .with_database("test")
             .with_table_name("test_table");
         let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
-        let session_store = SessionStore::<SessionPgPool>::new(Some(poll.clone().into()), session_config);
+        let session_store = SessionStore::<SessionPgPool>::new(Some(pool.clone().into()), session_config);
 
         // Build our application with some routes
         let app = Router::new()
             .route("/greet/:name", get(greet))
             .layer(SessionLayer::new(session_store))
-            .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(poll)).with_config(auth_config));
+            .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(pool)).with_config(auth_config));
 
         // Run it
         let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
