@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## Unreleased
 
+## 0.17.0 (26. September, 2025)
+### Changed
+- (Breaking)  axum_session 0.17"
 
 ## 0.16.0 (17. Janurary, 2025)
 ### Changed
