@@ -92,7 +92,7 @@ where
     /// use axum_session_auth::AuthConfig;
     /// use chrono::Duration;
     ///
-    /// let config = AuthConfig::<i64>::default().with_max_age(Some(Duration::days(2)));
+    /// let config = AuthConfig::<i64>::default().with_max_age(Duration::days(2));
     /// ```
     ///
     #[must_use]

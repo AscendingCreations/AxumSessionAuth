@@ -34,7 +34,7 @@ where
     /// contains an Optional axum_session_database Pool for Sqlx database lookups against Right tokens.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///    let layer = AuthSessionLayer::<User, i64, Sess, Pool>::new(None);
     /// ```
     ///

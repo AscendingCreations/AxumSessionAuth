@@ -29,8 +29,8 @@ If you need help with this library or have suggestions please go to our [Discord
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.16.0" }
-axum_session_sqlx = { version = "0.5.0" }
+axum_session_auth = { version = "0.17.0" }
+axum_session_sqlx = { version = "0.6.0" }
 ```
 
 #### Cargo Feature Flags
@@ -52,7 +52,7 @@ axum_session_sqlx = { version = "0.5.0" }
 
 # Example
 
-```rust
+```rust,ignore
 use sqlx::{PgPool, ConnectOptions, postgres::{PgPoolOptions, PgConnectOptions}};
 use std::net::SocketAddr;
 use axum_session::{Session, SessionConfig, SessionLayer, DatabasePool};

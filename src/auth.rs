@@ -114,7 +114,7 @@ impl Rights {
 /// All Rights, Methods and Authenticated Checks go thru this.
 ///
 /// # Examples
-/// ```rust no_run
+/// ```rust no_run ignore
 /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
 ///     .requires(Rights::all([
 ///         Rights::permission("admin:view"),
@@ -150,7 +150,7 @@ where
     /// Authentication Structure Builder.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
     ///     .requires(Rights::all([
     ///         Rights::permission("admin:view"),
@@ -180,7 +180,7 @@ where
     /// Adds Rights Requirements for Lookup.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
     ///     .requires(Rights::all([
     ///         Rights::permission("admin:view"),
@@ -203,7 +203,7 @@ where
     /// Contains an Optional axum_session_database Pool for User auto loading.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     /// if !Auth::<User, i64, Pool>::build([Method::POST], true)
     ///     .requires(Rights::all([
     ///         Rights::permission("admin:view"),

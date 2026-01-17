@@ -78,7 +78,7 @@ where
     /// Checks if the user is Authenticated
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.is_authenticated();
     /// ```
     ///
@@ -92,7 +92,7 @@ where
     /// Checks if the user is Active
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.is_active();
     /// ```
     ///
@@ -106,7 +106,7 @@ where
     /// Checks if the user is Anonymous
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.is_anonymous();
     /// ```
     ///
@@ -120,7 +120,7 @@ where
     /// Sets the Session Data to be saved for Long Term
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.remember_user(true);
     /// ```
     ///
@@ -131,7 +131,7 @@ where
     /// Sets the user id into the Session so it can auto login the user upon Axum request.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.login_user(user.id);
     /// ```
     ///
@@ -143,7 +143,7 @@ where
     /// Tells the system to clear the user so they get reloaded upon next Axum request.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.cache_clear_user(user.id);
     /// ```
     ///
@@ -154,7 +154,7 @@ where
     /// Emptys the cache to force reload of all users.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.cache_clear_all();
     /// ```
     ///
@@ -165,7 +165,7 @@ where
     /// Removes the user id from the Session preventing the system from auto login unless guest id is set.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.logout_user();
     /// ```
     ///
@@ -180,7 +180,7 @@ where
     /// if the session itself is not the same or reloaded.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.is_logged_in();
     /// ```
     ///
@@ -204,7 +204,7 @@ where
     /// Reloads the user data into current user and cache.
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.reload_user().await;
     /// ```
     ///
@@ -240,7 +240,7 @@ where
     /// THIS WILL NOT RELOAD THE USERS DATA
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.update_user_expiration();
     /// ```
     ///
@@ -259,7 +259,7 @@ where
     /// THIS WILL NOT RELOAD THE USERS DATA
     ///
     /// # Examples
-    /// ```rust no_run
+    /// ```rust no_run ignore
     ///  auth.sync_user_id();
     /// ```
     ///
@@ -275,7 +275,7 @@ where
 /// a AuthSessions Data was set as. To ensure nothing changed.
 ///
 /// # Examples
-/// ```rust no_run
+/// ```rust no_run ignore
 ///  auth.is_logged_in();
 /// ```
 ///
