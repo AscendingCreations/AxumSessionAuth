@@ -77,8 +77,9 @@ async fn main() {
         // Build our application with some routes
         let app = Router::new()
             .route("/greet/:name", get(greet))
-            .layer(SessionLayer::new(session_store))
-            .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(pool)).with_config(auth_config));
+            .layer(AuthSessionLayer::<User, i64, SessionPgPool, PgPool>::new(Some(pool)).with_config(auth_config))
+            //Axum Layer must come after due to how Axum loads each part like an Onion. Outer layer first. Inner layer last.
+            .layer(SessionLayer::new(session_store));
 
         // Run it
         let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
