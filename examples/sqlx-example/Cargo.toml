@@ -19,10 +19,10 @@ sqlx = { version = "0.8.1", features = [
 ] }
 anyhow = "1.0.100"
 serde = "1.0.227"
-axum_session_sqlx = {version = "0.5.1", features = ["sqlite"]}
+axum_session_sqlx = {version = "0.7.0", features = ["sqlite"]}
 
 [dependencies.axum_session]
-version = "0.17.0"
+version = "0.18.0"
 
 [dependencies.axum_session_auth]
 path = "../../"

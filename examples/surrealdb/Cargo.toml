@@ -8,13 +8,13 @@ edition = "2021"
 axum = {version = "0.8.4"}
 tokio = { version = "1.47.1", features = ["full", "tracing"] }
 async-trait = "0.1.89"
-surrealdb = { version = "2.3.10", features = ["kv-mem"] }
+surrealdb = { version = "2.6.0", features = ["kv-mem"] }
 anyhow = "1.0.100"
 serde = "1.0.227"
-axum_session_surreal = "0.4.1"
+axum_session_surreal = "0.6.0"
 
 [dependencies.axum_session]
-version = "0.17.0"
+version = "0.18.0"
 
 [dependencies.axum_session_auth]
 path = "../../"
