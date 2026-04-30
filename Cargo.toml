@@ -37,7 +37,7 @@ bytes = "1.11.1"
 http-body = "1.0.1"
 dashmap = "6.1.0"
 chrono = { version = "0.4.44", default-features = false, features = ["clock", "serde", "std"] }
-tokio = { version = "1.50.0", features = ["full"] }
+tokio = { version = "1.52.1", features = ["full"] }
 serde = "1.0.227"
 tracing = "0.1.41"
 
@@ -45,7 +45,7 @@ tracing = "0.1.41"
 #path = "C:/Sources/AxumSession"
 #git = "https://github.com/AscendingCreations/AxumSessions.git"
 #branch = "axum0.6"
-version = "0.19.0"
+version = "0.20.0"
 
 [package.metadata.docs.rs]
 features = ["advanced"]
