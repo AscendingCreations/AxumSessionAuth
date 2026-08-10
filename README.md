@@ -29,8 +29,8 @@ If you need help with this library or have suggestions please go to our [Discord
 # Cargo.toml
 [dependencies]
 # Postgres + rustls
-axum_session_auth = { version = "0.20.0" }
-axum_session_sqlx = { version = "0.9.0" }
+axum_session_auth = { version = "0.21.0" }
+axum_session_sqlx = { version = "0.11.0" }
 ```
 
 #### Cargo Feature Flags
