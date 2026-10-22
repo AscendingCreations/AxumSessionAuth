@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use surrealdb::{
     engine::any::{connect, Any},
     opt::auth::Root,
+    types::SurrealValue,
     Surreal,
 };
 use tokio::net::TcpListener;
@@ -21,7 +22,7 @@ pub struct User {
     pub permissions: HashSet<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, SurrealValue)]
 pub struct SqlPermissionTokens {
     pub token: String,
 }
@@ -123,7 +124,7 @@ impl User {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, SurrealValue)]
 pub struct SqlUser {
     pub user_id: i32,
     pub anonymous: bool,
@@ -154,8 +155,8 @@ async fn main() {
 
     // sign in as our account.
     db.signin(Root {
-        username: "root",
-        password: "root",
+        username: "root".to_owned(),
+        password: "root".to_owned(),
     })
     .await
     .unwrap();

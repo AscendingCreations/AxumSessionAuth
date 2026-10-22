@@ -1,8 +1,8 @@
 use crate::{AuthCache, AuthConfig, AuthSessionService, Authentication};
 use axum_session::DatabasePool;
-use chrono::{Duration, Utc};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData};
+use time::{Duration, OffsetDateTime};
 use tower_layer::Layer;
 
 /// Layer used to generate an AuthSessionService.
@@ -43,7 +43,7 @@ where
             pool,
             config: AuthConfig::default(),
             cache: AuthCache::<User, Type, Pool>::new(
-                Utc::now() + Duration::try_hours(1).unwrap_or_default(),
+                OffsetDateTime::now_utc() + Duration::hours(1),
             ),
             phantom_user: PhantomData,
             phantom_session: PhantomData,

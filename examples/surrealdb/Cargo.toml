@@ -5,16 +5,16 @@ authors = ["Andrew Wheeler <genusistimelord@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-axum = {version = "0.8.4"}
-tokio = { version = "1.47.1", features = ["full", "tracing"] }
-async-trait = "0.1.89"
-surrealdb = { version = "3.0.4", features = ["kv-mem"] }
+axum = {version = "0.8.9"}
+tokio = { version = "1.54.1", features = ["full", "tracing"] }
+async-trait = "0.1.92"
+surrealdb = { version = "3.3.4", features = ["kv-mem"] }
 anyhow = "1.0.104"
-serde = "1.0.227"
-axum_session_surreal = "0.8.0"
+serde = "1.0.229"
+axum_session_surreal = "0.10.0"
 
 [dependencies.axum_session]
-version = "0.21.0"
+version = "0.22.0"
 
 [dependencies.axum_session_auth]
 path = "../../"

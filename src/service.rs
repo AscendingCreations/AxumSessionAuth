@@ -2,7 +2,6 @@ use crate::{AuthCache, AuthConfig, AuthSession, AuthUser, Authentication};
 use axum_core::BoxError;
 use axum_session::{DatabasePool, Session};
 use bytes::Bytes;
-use chrono::Utc;
 use futures::future::BoxFuture;
 use http::{Request, Response};
 use http_body::Body as HttpBody;
@@ -14,6 +13,7 @@ use std::{
     marker::PhantomData,
     task::{Context, Poll},
 };
+use time::OffsetDateTime;
 use tower_service::Service;
 
 #[derive(Clone)]
@@ -92,14 +92,14 @@ where
                 if config.cache {
                     if let Some(mut user) = cache.inner.get_mut(&id) {
                         tracing::debug!("user id: {} found in cache", id);
-                        user.expires = Utc::now() + config.max_age;
+                        user.expires = OffsetDateTime::now_utc() + config.max_age;
                         user.current_user.clone()
                     } else {
                         tracing::debug!("loading user id: {} from load_user", id);
                         let current_user = User::load_user(id.clone(), pool.as_ref()).await.ok();
                         let user = AuthUser::<User, Type, Pool> {
                             current_user: current_user.clone(),
-                            expires: Utc::now() + config.max_age,
+                            expires: OffsetDateTime::now_utc() + config.max_age,
                             phantom_pool: Default::default(),
                             phantom_type: Default::default(),
                         };
@@ -118,10 +118,13 @@ where
             if config.cache {
                 let last_sweep = { *cache.last_expiry_sweep.read().await };
 
-                if last_sweep <= Utc::now() {
+                if last_sweep <= OffsetDateTime::now_utc() {
                     tracing::info!("clearing old users from user cache.");
-                    cache.inner.retain(|_k, v| v.expires > Utc::now());
-                    *cache.last_expiry_sweep.write().await = Utc::now() + config.max_age;
+                    cache
+                        .inner
+                        .retain(|_k, v| v.expires > OffsetDateTime::now_utc());
+                    *cache.last_expiry_sweep.write().await =
+                        OffsetDateTime::now_utc() + config.max_age;
                 }
             }
 

@@ -1,8 +1,8 @@
 use crate::{AuthUser, Authentication};
-use chrono::{DateTime, Utc};
 use dashmap::DashMap;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, hash::Hash, marker::PhantomData, sync::Arc};
+use time::OffsetDateTime;
 use tokio::sync::RwLock;
 
 #[derive(Clone)]
@@ -12,7 +12,7 @@ where
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
-    pub(crate) last_expiry_sweep: Arc<RwLock<DateTime<Utc>>>,
+    pub(crate) last_expiry_sweep: Arc<RwLock<OffsetDateTime>>,
     pub(crate) inner: Arc<DashMap<Type, AuthUser<User, Type, Pool>>>,
     pub phantom: PhantomData<Pool>,
 }
@@ -36,7 +36,7 @@ where
     Pool: Clone + Send + Sync + fmt::Debug + 'static,
     Type: Eq + Default + Clone + Send + Sync + Hash + Serialize + DeserializeOwned + 'static,
 {
-    pub fn new(last_expiry_sweep: DateTime<Utc>) -> Self {
+    pub fn new(last_expiry_sweep: OffsetDateTime) -> Self {
         Self {
             last_expiry_sweep: Arc::new(RwLock::new(last_expiry_sweep)),
             inner: Arc::new(DashMap::default()),
