@@ -11,10 +11,10 @@ async-trait = "0.1.92"
 surrealdb = { version = "3.3.4", features = ["kv-mem"] }
 anyhow = "1.0.104"
 serde = "1.0.229"
-axum_session_surreal = "0.10.0"
+axum_session_surreal = "0.11.0"
 
 [dependencies.axum_session]
-version = "0.22.0"
+version = "0.23.0"
 
 [dependencies.axum_session_auth]
 path = "../../"

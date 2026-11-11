@@ -181,7 +181,9 @@ async fn main() {
 
     //This Defaults as normal Cookies.
     //To enable Private cookies for integrity, and authenticity please check the next Example.
-    let session_config = SessionConfig::default().with_table_name("test_table");
+    let session_config = SessionConfig::default()
+        .with_table_name("test_table")
+        .with_database_initiation(true);
     let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
 
     // create SessionStore and initiate the database tables
