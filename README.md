@@ -70,6 +70,7 @@ async fn main() {
 
         let session_config = SessionConfig::default()
             .with_database("test")
+            .with_database_initiation(true)
             .with_table_name("test_table");
         let auth_config = AuthConfig::<i64>::default().with_anonymous_user_id(Some(1));
         let session_store = SessionStore::<SessionPgPool>::new(Some(pool.clone().into()), session_config);
